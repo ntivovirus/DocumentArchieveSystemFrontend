@@ -37,7 +37,7 @@
                 loading-text="Loading... Please wait"
               >
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-5" @click="FetchCorrespondenceDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
                   <v-icon small @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
                 </template>
               </v-data-table>
@@ -67,6 +67,7 @@
           <v-card-text>
             <v-form class="px-3" ref="form">
               <v-text-field
+                id="fileNameTxtField"
                 label="File Name"
                 v-model="fileNameTxtField"
                 prepend-icon="mdi-file"
@@ -78,12 +79,11 @@
               ></v-textarea>
               <v-select
                 v-model="selectCorrespondence"
-                :items="computedCorrespondences"
-                item-key="value"
-                item-value="key"
+                :items="correspondences"
                 label="Select Correspondence"
                 data-vv-name="select"
                 prepend-icon="mdi-group"
+
                 required
               ></v-select>
               <v-select
@@ -110,8 +110,8 @@
           <v-btn
             class="primary ma-5"
             justify-end
-            @click="addCorrespondenceMethod"
-            :loading="BtnAddCorrespondenceLoading"
+            @click="addFileMethod"
+            :loading="BtnAddFileLoading"
             right
           >
             Add File</v-btn>
@@ -145,14 +145,14 @@
                 v-model="file.FILE_NAME"
                 prepend-icon="mdi-group"
               ></v-text-field>
-              <v-text-field
+              <v-textarea
                 label="File Description"
                 v-model="file.FILE_DESCRIPTION"
                 prepend-icon="mdi-group"
-              ></v-text-field>
+              ></v-textarea>
               <v-select
                 
-                v-model="selectedcorrespondence"
+                v-model="file.correspondence_id"
                 :items="items"
                 label="Select Correspondence"
                 data-vv-name="select"
@@ -172,8 +172,8 @@
           </v-card-text>
           <v-btn
             class="primary ma-5"
-            @click="updateCorrespondenceMethod"
-            :loading="BtnUpdateCorrespondenceLoading"
+            @click="updateFileMethod"
+            :loading="BtnUpdateFileLoading"
           >
             Update file
             </v-btn>
@@ -196,7 +196,7 @@
           <div class="text-center d-flex align-center justify-space-between">
           <v-btn
             class=" primary ma-5"
-            @click="deletefiledialog = !deletecorrespondencedialog"
+            @click="deletefiledialog = !deletefiledialog"
           >
             CANCEL
             </v-btn>
@@ -237,8 +237,9 @@ export default {
       selectStatus:"",
 
       
-      selectedcorrespondence:"",
-      correspondences: { },
+      selectedcorrespondence:"", // from update model
+      selectCorrespondence:"",
+      correspondences: [],
 
       filestatuses: [
         'CLOSED', 'OPEN'
@@ -250,23 +251,19 @@ export default {
       search: "",
       // test: false,
 
-
-      
-
-
-
       //END ADD NEW FILE DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
 
 
       //UPDATE FILE DATA
-      updatecorrespondencedialog: false,
+      updatefiledialog: false,
       fileID: null,
       BtnUpdateFileLoading: false,
       file: {
-        CORRESPONDENCE_NAME:null, 
-        CORRESPONDENCE_CODENAME:null, 
-        CORRESPONDENCE_DESCRIPTION:null
+        FILE_NAME:null, 
+        FILE_DESCRIPTION:null, 
+        STATUS:null,
+        correspondence_id:null
       },
 
       //END UPDATE FILE DATA
@@ -317,19 +314,19 @@ export default {
         });
     },
       
-    // showAddFileDialog() {
-    //   this.addfiledialog = true;
-    // },
 
     addFileMethod() {
       this.BtnAddFileLoading = true;
       axios
-        .post("http://127.0.0.1:8000/api/AddCorrespondenceRoute", {
-          CorrespondenceNameHolder: this.correspondenceNameTxtField,
-          CorrespondenceCodeNameHolder: this.correspondenceCodeNameTxtField,
-          CorrespondenceDescriptionHolder: this.correspondenceDescriptionTxtField
+        .post("http://127.0.0.1:8000/api/AddFileRoute", {
+          FileNameHolder: this.fileNameTxtField,
+          FileDescriptionHolder: this.fileDescriptionTxtField,
+          StatusHolder: this.selectStatus,
+          correspondenceHolder : this.selectCorrespondence
+
         })
         .then((response) => {
+          console.log(response);
           if (response.status === 200) {
             this.BtnAddCorrespondenceLoading = false;
             this.addfiledialog = false;
@@ -341,16 +338,16 @@ export default {
         });
     },
 
-    FetchCorrespondenceDetails(CorrespondenceId) {
+    FetchFileDetails(FileId) {
       
-      this.correspondenceID= CorrespondenceId;
+      this.fileID= FileId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.correspondenceID}`)
+        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
         .then((response) => {
           if (response.status ===200) {
-            this.correspondence = response.data.Correspondence
+            this.file = response.data.File
 
-            this.updatecorrespondencedialog = true;
+            this.updatefiledialog = true;
 
          }
         })  
@@ -373,20 +370,22 @@ export default {
       
     },
 
-    updateCorrespondenceMethod(CorrespondenceId) {
-        this.BtnUpdateCorrespondenceLoading = true,
-        this.CorrespondenceID = CorrespondenceId;
+    updateFileMethod(FileId) {
+        this.BtnUpdateFileLoading = true,
+        this.fileID = FileId;
         axios
-          .put(`http://127.0.0.1:8000/api/updateCorrespondenceRoute/${this.correspondenceID}`, {
-            CorrespondenceNameHolder: this.correspondence.CORRESPONDENCE_NAME,
-            CorrespondenceCodeNameHolder: this.correspondence.CORRESPONDENCE_CODENAME,
-            CorrespondenceDescriptionHolder: this.correspondence.CORRESPONDENCE_DESCRIPTION
+          .put(`http://127.0.0.1:8000/api/updateFileRoute/${this.fileID}`, {
+            FileNameHolder: this.file.FILE_NAME,
+            FileDescriptionHolder: this.file.FILE_DESCRIPTION,
+            FileStatusHolder: this.file.STATUS,
+            CorrespondenceHolder: this.file.correspondence_id
+
           })
           .then((response) => {
             if (response.status ===200) {
-              this.getCorrespondencesFromApi();
-              this.updatecorrespondencedialog = false;
-              this.BtnUpdateCorrespondenceLoading = false;
+              this.getFilesFromApi();
+              this.updatefiledialog = false;
+              this.BtnUpdateFileLoading = false;
 
             }
           })
@@ -414,35 +413,26 @@ export default {
        .get(`http://127.0.0.1:8000/api/ListCorrespondenceRoute`)
          .then((response)=> {
           if (response.status ===200) {
-            var correspondences = response.data;
-            // alert('steve'+correspondences.data);
-            response.data.forEach(correspondence => {
-            // this.correspondences.push(correspondence.CORRESPONDENCE_NAME);
+            var correspondences = response.data
+            console.log('steve'+correspondences);
+            correspondences.forEach(correspondence => {
+              this.correspondences.push(correspondence.CORRESPONDENCE_NAME); 
+              // $zako = this.correspondences.push(correspondence.id); 
+              // alert($zako);
 
-            this.correspondences[correspondence.id]= correspondence.CORRESPONDENCE_NAME; 
-
-              // $getcorrID = this.correspondences.push(correspondence.id);
-              alert('id'+correspondence.id +'name'+correspondence.CORRESPONDENCE_NAME); 
-               
             });
-              // alert(this.correspondences);
+            // this.deletefiledialog = true;
+
          }
 
          }
        ) 
     }
   },
-  computed: {
-    computedCorrespondences () {
-      return Object.entries(this.correspondences).map(([key,value]) =>({key,value}));
-    }
-  },
 
   mounted() {
     this.getFilesFromApi();
     this.selectcorrespondencemethod();
-    
-    alert(Object.values(this.correspondences));
   },
 };
 </script>

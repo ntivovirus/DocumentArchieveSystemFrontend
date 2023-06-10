@@ -162,7 +162,7 @@
               <v-select
                 
                 v-model="file.STATUS"
-                :items="items"
+                :items="filestatuses"
                 label="File Status"
                 data-vv-name="select"
                 prepend-icon="mdi-group"
@@ -351,7 +351,7 @@ export default {
         .then((response) => {
           if (response.status ===200) {
             this.file = response.data.File
-
+            // alert(selectStatus);
             this.updatefiledialog = true;
 
          }
@@ -375,22 +375,27 @@ export default {
       
     },
 
-    updateCorrespondenceMethod(CorrespondenceId) {
-        this.BtnUpdateCorrespondenceLoading = true,
-        this.CorrespondenceID = CorrespondenceId;
+    updateFileMethod(FileId) {
+        this.BtnUpdateFileLoading = true,
+        this.FileID = FileId;
         axios
-          .put(`http://127.0.0.1:8000/api/updateCorrespondenceRoute/${this.correspondenceID}`, {
-            CorrespondenceNameHolder: this.correspondence.CORRESPONDENCE_NAME,
-            CorrespondenceCodeNameHolder: this.correspondence.CORRESPONDENCE_CODENAME,
-            CorrespondenceDescriptionHolder: this.correspondence.CORRESPONDENCE_DESCRIPTION
-          })
-          .then((response) => {
-            if (response.status ===200) {
-              this.getCorrespondencesFromApi();
-              this.updatecorrespondencedialog = false;
-              this.BtnUpdateCorrespondenceLoading = false;
+          .put(`http://127.0.0.1:8000/api/updateFileRoute/${this.FileID}`, {
+            FileNameHolder: this.fileNameTxtField,
+          FileDescriptionHolder: this.fileDescriptionTxtField,
+          StatusHolder: this.selectStatus,
+          correspondenceHolder : this.selectCorrespondence
 
-            }
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.BtnUpdateFileLoading = false;
+            this.updatefiledialog = false;
+            this.getFilesFromApi();
+            this.$refs.form.reset();
+          } else {
+            alert("Error updating file");
+          }
           })
     },
 
