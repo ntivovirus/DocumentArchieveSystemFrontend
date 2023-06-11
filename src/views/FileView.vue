@@ -152,8 +152,8 @@
               ></v-textarea>
               <v-select
                 
-                v-model="file.correspondence_id"
-                :items="items"
+                v-model="selectCorrespondence"
+                :items="correspondences"
                 label="Select Correspondence"
                 data-vv-name="select"
                 prepend-icon="mdi-group"
@@ -265,6 +265,7 @@ export default {
       fileID: null,
       BtnUpdateFileLoading: false,
       file: {
+        id: null,
         FILE_NAME:null, 
         FILE_DESCRIPTION:null, 
         STATUS:null,
@@ -351,6 +352,7 @@ export default {
         .then((response) => {
           if (response.status ===200) {
             this.file = response.data.File
+            this.selectCorrespondence = response.data.updateFileCorrespondanceNameSelect
             // alert(selectStatus);
             this.updatefiledialog = true;
 
@@ -375,14 +377,14 @@ export default {
       
     },
 
-    updateFileMethod(FileId) {
+    updateFileMethod() {
         this.BtnUpdateFileLoading = true,
-        this.FileID = FileId;
+        // this.FileID = FileId;
         axios
-          .put(`http://127.0.0.1:8000/api/updateFileRoute/${this.FileID}`, {
-            FileNameHolder: this.fileNameTxtField,
-          FileDescriptionHolder: this.fileDescriptionTxtField,
-          StatusHolder: this.selectStatus,
+          .put(`http://127.0.0.1:8000/api/updateFileRoute/${this.file.id}`, {
+            FileNameHolder: this.file.FILE_NAME,
+          FileDescriptionHolder: this.file.FILE_DESCRIPTION,
+          StatusHolder: this.file.STATUS,
           correspondenceHolder : this.selectCorrespondence
 
         })
