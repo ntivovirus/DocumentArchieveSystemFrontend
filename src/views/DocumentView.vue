@@ -1,44 +1,42 @@
 <template>
-  <div class="section">
+  <div class="document">
     <v-container fluid>
       <v-row>
         <v-col>
           <v-card>
             <v-card-title>
-              <h4>SECTIONS/DEPARTMENTS</h4>
+              <h4>DOCUMENTS</h4>
               <v-spacer></v-spacer>
-              <v-btn
-                slot="activator"
-                depressed
-                class="primary"
-                @click="showAddSectionDialog"
-              >
+              <v-btn slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog ">
                 <v-icon>mdi-plus</v-icon>
-                <span class="text-capitalize"> kape new section</span>
+                <span class="text-capitalize">New Document</span>
               </v-btn>
             </v-card-title>
             <v-card-text>
               <div class="d-flex justify-end">
-                <v-text-field
-                  class="shrink ml-2"
-                  v-model="search"
-                  append-icon="mdi-magnify"
-                  label="Search"
-                >
+                <v-text-field 
+                class="shrink ml-2" 
+                v-model="search" 
+                append-icon="mdi-magnify" 
+                label="Search">
                 </v-text-field>
               </div>
-              <v-data-table dense
-                :headers="headers"
-                :items="sections"
-                :items-per-page="10"
-                class="elevation-1"
-                :search="search"
-                :loading="sectiondataloading"
-                loading-text="Loading... Please wait"
+              <v-data-table 
+              dense 
+              :headers="headers" 
+              :items="documents" 
+              :items-per-page="10" 
+              class="elevation-1"
+              :search="search" 
+              :loading="documentdataloading" 
+              loading-text="Loading... Please wait"
               >
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-5" @click="FetchSectionDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
+                  <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-eye-check </v-icon>
+                  <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -46,71 +44,159 @@
         </v-col>
       </v-row>
 
-      <!--ADD SECTION DIALOG-->
 
-      <v-dialog v-model="addsectiondialog" max-width="500">
+      <!-- START ADD FILE MODAL -->
+
+      <v-dialog v-model="adddocumentdialog" max-width="500">
         <v-card>
           <v-card-title>
-            <h3>Add New Section</h3>
-          </v-card-title>
-          <v-card-text>
-            <v-form class="px-3">
-              <v-text-field
-                label="Section Name"
-                v-model="sectionNameTxtField"
-                prepend-icon="mdi-group"
-              ></v-text-field>
-              <v-textarea
-                label="Section Description"
-                v-model="sectionDescriptionTxtField"
-                prepend-icon="mdi-pencil"
-              ></v-textarea>
-            </v-form>
-          </v-card-text>
-          <v-btn
-            class="primary ma-5"
-            @click="addSectionMethod"
-            :loading="BtnAddSectionLoading"
-          >
-            Add Section</v-btn
-          >
-        </v-card>
-      </v-dialog>
+            <h3>Add New Document</h3>
+            <v-spacer></v-spacer>
 
-      <!-- END ADD SECTION DIALOG -->
-
-      <!-- START UPDATE SECTION DIALOG -->
-      <v-dialog v-model="updatesectiondialog" max-width="500">
-        <v-card>
-          <v-card-title>
-            <h3>Update Section</h3>
-          </v-card-title>
-          <v-card-text>
-            <v-form class="px-3">
-              <v-text-field
-                label="Section Name"
-                v-model="section.SECTION_NAME"
-                prepend-icon="mdi-group"
-              ></v-text-field>
-              <v-textarea
-                label="Section Description"
-                v-model="section.SECTION_DESCRIPTION"
-                prepend-icon="mdi-pencil"
-              ></v-textarea>
-            </v-form>
-          </v-card-text>
-          <v-btn
-            class="primary ma-5"
-            @click="updateSectionMethod"
-            :loading="BtnUpdateSectionLoading"
-          >
-            Update Section
+            <v-btn text color="grey" rounded @click="adddocumentdialog = !adddocumentdialog">
+              <span>Close</span>
+              <v-icon right>mdi-close-outline</v-icon>
             </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-form class="px-3" ref="form">
+              <v-text-field label="File Name" v-model="documentNameTxtField"
+                prepend-icon="mdi-file"></v-text-field>
+              <v-text-field label="Folio Number" v-model="documentFolioNumberTxtField"
+                prepend-icon="mdi-file"></v-text-field>
+              <!-- <v-textarea label="File Description" v-model="fileDescriptionTxtField"
+                prepend-icon="mdi-file-question"></v-textarea> -->
+              <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
+                data-vv-name="select" prepend-icon="mdi-group" required></v-select>
+              <!-- <v-select v-model="selectStatus" :items="filestatuses" label="File Status" data-vv-name="select"
+                prepend-icon="mdi-file-settings" required></v-select> -->
+                <v-select v-model="selectFile" :items="files" label="Select File" data-vv-name="select"
+                prepend-icon="mdi-file-settings" required></v-select>
+
+            </v-form>
+          </v-card-text>
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class="danger ma-5" justify-start color="grey"
+              @click="adddocumentdialog = !adddocumentdialog">
+              Close
+            </v-btn>
+            <v-btn class="primary ma-5" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right>
+              Add File</v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+      <!-- END ADD FILE MODAL -->
+
+
+
+      <!-- START UPDATE FILE MODAL -->
+      <v-dialog v-model="updatefiledialog" max-width="500">
+        <v-card>
+          <v-card-title>
+            <h3>Update File</h3>
+            <v-spacer></v-spacer>
+
+            <v-btn text color="grey" rounded @click="updatefiledialog = !updatefiledialog">
+              <span>Close</span>
+              <v-icon right>mdi-close-outline</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-form class="px-3" ref="updateform">
+              <v-text-field label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
+              <v-textarea label="File Description" v-model="file.FILE_DESCRIPTION" prepend-icon="mdi-group"></v-textarea>
+              <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
+                data-vv-name="select" prepend-icon="mdi-group" required></v-select>
+              <v-select v-model="file.STATUS" :items="filestatuses" label="File Status" data-vv-name="select"
+                prepend-icon="mdi-group" required></v-select>
+            </v-form>
+          </v-card-text>
+          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+            Update file
+          </v-btn>
         </v-card>
       </v-dialog>
 
+      <!-- END UPDATE FILE MODAL -->
 
-      <!-- END UPDATE SECTION DIALOG -->
+      <!-- START DELETE FILE MODAL -->
+      <v-dialog v-model="deletefiledialog" max-width="400">
+        <v-card>
+          <v-card-title class="text-center">
+            <h5>DELETE</h5>
+
+          </v-card-title>
+          <v-card-text>
+
+          </v-card-text>
+
+          <div class="text-center d-flex align-center justify-space-between">
+            <v-btn class=" primary ma-5" @click="deletefiledialog = !deletefiledialog">
+              CANCEL
+            </v-btn>
+            <v-btn class="ma-5" color="error" @click="deleteFileMethod" :loading="BtnDeleteFileLoading">
+              DELETE
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+
+      <!-- END DELETE FILE MODAL -->
+
+      <!-- START ADD DOCUMENT MODAL -->
+      <v-dialog v-model="adddocumentdialog" max-width="500">
+        <v-card>
+          <v-card-title>
+            <h3>Add Document</h3>
+            <v-spacer></v-spacer>
+
+            <v-btn text color="grey" rounded @click="adddocumentdialog = !adddocumentdialog">
+              <span>Close</span>
+              <v-icon right>mdi-close-outline</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-form class="px-3" ref="updateform">
+              <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
+              <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
+                prepend-icon="mdi-group"></v-text-field>
+              <v-text-field label="Document Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
+              <v-textarea label="Document Description" v-model="file.FILE_DESCRIPTION"
+                prepend-icon="mdi-group"></v-textarea>
+              <v-file-input v-model="fileDocuments" color="deep-purple accent-4" counter label="File input" multiple
+                placeholder="Select your files" prepend-icon="mdi-paperclip" outlined :show-size="1000">
+                <template v-slot:selection="{ index, text }">
+                  <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
+                    {{ text }}
+                  </v-chip>
+
+                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
+                    +{{ files.length - 2 }} File(s)
+                  </span>
+                </template>
+              </v-file-input>
+              <!-- <v-select
+                
+                v-model="selectCorrespondence"
+                :items="correspondences"
+                label="Select Correspondence"
+                data-vv-name="select"
+                prepend-icon="mdi-group"
+                required
+              ></v-select> -->
+
+            </v-form>
+          </v-card-text>
+          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+            Add Document
+          </v-btn>
+        </v-card>
+      </v-dialog>
+
+      <!-- END ADD DOCUMENT MODAL -->
+
+
+
 
     </v-container>
   </div>
@@ -120,45 +206,87 @@
 import axios from "axios";
 
 export default {
-  name: "section", // name of component view
+  name: "file", // name of component view
 
   data() {
     return {
-      //ADD NEW SECTION DATA
-      sectionNameTxtField: "",
-      sectionDescriptionTxtField: "",
-      addsectiondialog: false,
-      BtnAddSectionLoading: false,
-      search: "",
-      test: false,
-      sectiondataloading: false,
 
-      //END ADD NEW SECTION DATA
+      documentdataloading: false,
+
+      //ADD NEW FILE DATA
+      fileNameTxtField: "",
+      fileDescriptionTxtField: "",
+      selectStatus: "",
+
+
+      selectedcorrespondence: "", // from update model
+      selectCcorrespondence: "",
+      correspondences: [],
+
+      filestatuses: [
+        'CLOSED', 'OPEN'
+      ],
+
+
+      adddocumentdialog: false,
+      BtnAddCorrespondenceLoading: false,
+      search: "",
+      // test: false,
+
+
+
+
+
+
+      //END ADD NEW FILE DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-      //UPDATE SECTION DATA
-      updatesectiondialog: false,
-      sectionID: null,
-      section: {
-        CORRESPONDENCE_NAME:null, 
-        CORRESPONDENCE_DESCRIPTION:null
+      //UPDATE FILE DATA
+      updatefiledialog: false,
+      fileID: null,
+      BtnUpdateFileLoading: false,
+      file: {
+        id: null,
+        FILE_NAME: null,
+        FILE_DESCRIPTION: null,
+        STATUS: null,
+        correspondence_id: null
       },
 
-      //END UPDATE SECTION DATA
+      //END UPDATE FILE DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
 
+      //DELETE FILE DATA
 
-      sections: [],
+      deletefiledialog: false,
+      BtnDeleteFileLoading: false,
+
+      //END UPDATE FILE DATA
+      ////////////////////////////////////////////////////////////////////////////////////////////
+
+      /////////////////////////////////////////////////////////////////
+      //ADD DOCUMENTS TO FILES
+      adddocumentdialog: false,
+      fileDocuments: [],
+
+      //END ADD DOCUMENTS TO FILES
+
+
+
+      documents: [],
       headers: [
         {
-          text: "CORRESPONDENCE ID",
+          text: "ID",
           align: "start",
           sortable: false,
           value: "id",
         },
-        { text: "CORRESPONDENCE NAME", value: "CORRESPONDENCE_NAME" },
-        { text: "CORRESPONDENCE DESCRIPTION", value: "CORRESPONDENCE_DESCRIPTION" },
+        { text: "DOCUMENT NAME", value: "DOCUMENT_NAME" },
+        { text: "FOLIO NUMBER", value: "FOLIO_NUMBER" },
+        // { text: "FOLIO NUMBER", value: "STATUS" },
+        { text: "CREATED AT", value: "created_at" },
+        { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],
     };
@@ -166,76 +294,160 @@ export default {
 
   methods: {
 
-    getSectionsFromApi() {
-      this.sectiondataloading=true;
+    getDocumentsFromApi() {
+      this.documentdataloading = true;
       axios
-        .get("http://127.0.0.1:8000/api/ListCorrespondenceRoute")
+        .get("http://127.0.0.1:8000/api/ListDocumentRoute")
         .then((response) => {
           if (response.status === 200) {
-            this.sections = response.data;
-      this.sectiondataloading=false;
+            this.documents = response.data;
+            this.documentdataloading = false;
 
           } else {
-            alert("Error Loading Correspondences data");
+            alert("Error Loading Documents data");
           }
         });
     },
-      
-    showAddSectionDialog() {
-      this.addsectiondialog = true;
+
+
+    addFileMethod() {
+      this.BtnAddFileLoading = true;
+      axios
+        .post("http://127.0.0.1:8000/api/AddFileRoute", {
+          FileNameHolder: this.fileNameTxtField,
+          FileDescriptionHolder: this.fileDescriptionTxtField,
+          StatusHolder: this.selectStatus,
+          correspondenceHolder: this.selectCorrespondence
+
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.BtnAddCorrespondenceLoading = false;
+            this.addfiledialog = false;
+            this.getFilesFromApi();
+            this.$refs.form.reset();
+          } else {
+            alert("Error adding file");
+          }
+        });
     },
 
-    addSectionMethod() {
-      this.BtnAddSectionLoading = true;
+    FetchFileDetails(FileId) {
+
+      this.fileID = FileId;
       axios
-        .post("http://127.0.0.1:8000/api/AddSectionRoute", {
-          SectionNameHolder: this.sectionNameTxtField,
-          SectionDescriptionHolder: this.sectionDescriptionTxtField,
+        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+        .then((response) => {
+          if (response.status === 200) {
+            this.file = response.data.File
+            this.selectCorrespondence = response.data.updateFileCorrespondanceNameSelect
+            // alert(selectStatus);
+            this.updatefiledialog = true;
+
+          }
+        })
+
+    },
+
+    FetchDocumentFileDetails(FileId) {
+
+this.fileID = FileId;
+axios
+  .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+  .then((response) => {
+    if (response.status === 200) {
+      this.file = response.data.File
+      this.selectCorrespondence = response.data.updateFileCorrespondanceNameSelect
+      // alert(selectStatus);
+      this.adddocumentdialog = true;
+
+    }
+  })
+
+},
+
+    FetchDeleteFileDetails(FileId) {
+
+      this.fileID = FileId;
+      axios
+        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+        .then((response) => {
+          if (response.status === 200) {
+            this.file = response.data.File
+            this.deletefiledialog = true;
+
+
+          }
+        })
+
+    },
+
+    updateFileMethod() {
+      this.BtnUpdateFileLoading = true,
+        // this.FileID = FileId;
+        axios
+          .put(`http://127.0.0.1:8000/api/updateFileRoute/${this.file.id}`, {
+            FileNameHolder: this.file.FILE_NAME,
+            FileDescriptionHolder: this.file.FILE_DESCRIPTION,
+            StatusHolder: this.file.STATUS,
+            correspondenceHolder: this.selectCorrespondence
+
+          })
+          .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+              this.BtnUpdateFileLoading = false;
+              this.updatefiledialog = false;
+              this.getFilesFromApi();
+              this.$refs.form.reset();
+            } else {
+              alert("Error updating file");
+            }
+          })
+    },
+
+    deleteFileMethod(FileId) {
+      this.BtnDeleteFileLoading = true,
+        this.FileID = FileId;
+      axios
+        .delete(`http://127.0.0.1:8000/api/deleteFileRoute/${this.fileID}`, {
+
         })
         .then((response) => {
           if (response.status === 200) {
-            this.BtnAddSectionLoading = false;
-            this.addsectiondialog = false;
-            this.getSectionsFromApi();
-          } else {
-            alert("Error adding section");
+            this.getFilesFromApi();
+            this.deletefiledialog = false;
+            this.BtnDeleteFileLoading = false;
           }
-        });
+        })
     },
 
-    FetchSectionDetails(SectionId) {
-      this.sectionID= SectionId;
+    selectcorrespondencemethod() {
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.sectionID}`)
+        .get(`http://127.0.0.1:8000/api/ListCorrespondenceRoute`)
         .then((response) => {
-          if (response.status ===200) {
-            this.section = response.data.section
-            this.updatesectiondialog = true;
+          if (response.status === 200) {
+            var correspondences = response.data
+            console.log('steve' + correspondences);
+            correspondences.forEach(correspondence => {
+              this.correspondences.push(correspondence.CORRESPONDENCE_NAME);
+              // $zako = this.correspondences.push(correspondence.id); 
+              // alert($zako);
+
+            });
+            // this.deletefiledialog = true;
 
           }
-        })  
-      
-    },
 
-    updateSectionMethod(SectionId) {
-        this.SectionID = SectionId;
-        alert(this.SectionID);
-        axios
-          .put("http://127.0.0.1:8000/api/updateSectionRoute/${this.sectionID}", {
-            SectionNameHolder: this.section.SECTION_NAME,
-            SectionDescriptionHolder: this.section.SECTION_DESCRIPTION
-          })
-          .then((response) => {
-            if (response.status ===200) {
-              alert("data updated succeessfully");
-            }
-          })
+        }
+        )
     }
   },
 
   mounted() {
-    this.getSectionsFromApi();
-    //this.addSectionMethod();
+    this.getDocumentsFromApi();
+    this.selectcorrespondencemethod();
   },
 };
 </script>
