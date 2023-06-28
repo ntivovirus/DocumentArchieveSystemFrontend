@@ -4,7 +4,7 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-card-title>
+            <v-card-title> 
               <h4>FILES</h4>
               <v-spacer></v-spacer>
               <v-btn slot="activator" depressed class="primary" @click="addfiledialog = !addfiledialog">
@@ -15,9 +15,9 @@
             <v-card-text>
               <div class="d-flex justify-end">
                 <v-text-field class="shrink ml-2" v-model="search" append-icon="mdi-magnify" label="Search">
-                </v-text-field>
+                </v-text-field> 
               </div>
-              <v-data-table 
+              <v-data-table  
               dense 
               :headers="headers" 
               :items="files" 
@@ -144,38 +144,26 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="updateform">
+          <v-form class="px-3" ref="addDocForm"  enctype="multipart/form-data">
               <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
                 prepend-icon="mdi-group"></v-text-field>
-              <v-text-field label="Document Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
-              <v-textarea label="Document Description" v-model="file.FILE_DESCRIPTION"
-                prepend-icon="mdi-group"></v-textarea>
-              <v-file-input v-model="fileDocuments" color="deep-purple accent-4" counter label="File input" multiple
-                placeholder="Select your files" prepend-icon="mdi-paperclip" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
-                    {{ text }}
-                  </v-chip>
+              <v-text-field label="Document Name" v-model="documentNameInFileTextField" prepend-icon="mdi-group"></v-text-field>
+              <v-text-field label="Folio Number" v-model="documentFolioNumberInFileTextField"
+                prepend-icon="mdi-group"></v-text-field>
+              <input type="file"    ref="fileInput"/>
 
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ files.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <!-- <v-select
-                
-                v-model="selectCorrespondence"
-                :items="correspondences"
-                label="Select Correspondence"
-                data-vv-name="select"
-                prepend-icon="mdi-group"
-                required
-              ></v-select> -->
-
+                <!-- <v-file-input
+                  clearable
+                  show-size
+                  label="File input"
+                  v-model="pinDocumentInFileTextField"
+                ></v-file-input> -->
+            
             </v-form>
           </v-card-text>
-          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+          <!-- <v-btn class="primary ma-5" @click="addDocumentInFileMethod" :loading="BtnAddDocumentLoading"> -->
+          <v-btn class="primary ma-5" @click="submitForm" :loading="BtnAddDocumentLoading">
             Add Document
           </v-btn>
         </v-card>
@@ -192,9 +180,11 @@
 
 <script>
 import axios from "axios";
-
+import { ref } from "vue";
 export default {
   name: "file", // name of component view
+  
+
 
   data() {
     return {
@@ -217,7 +207,7 @@ export default {
 
 
       addfiledialog: false,
-      BtnAddCorrespondenceLoading: false,
+      BtnAddFileLoading: false,
       search: "",
       // test: false,
 
@@ -256,7 +246,14 @@ export default {
       /////////////////////////////////////////////////////////////////
       //ADD DOCUMENTS TO FILES
       adddocumentdialog: false,
+      BtnAddDocumentLoading:false,
       fileDocuments: [],
+
+
+      documentNameInFileTextField:"",
+      pinDocumentInFileTextField:null,
+      documentFolioNumberInFileTextField:"",
+
 
       //END ADD DOCUMENTS TO FILES
 
@@ -430,8 +427,114 @@ axios
 
         }
         )
+    },
+
+    addDocumentInFileMethod(){
+      this.BtnAddDocumentLoading = true,
+
+      axios
+      .post("http://127.0.0.1:8000/api/AddDocumentRoute", {
+          FileHolder: this.file.FILE_NAME,
+          DocumentNameHolder: this.documentNameInFileTextField,
+          FolioNumberHolder: this.documentFolioNumberInFileTextField,
+          DocPathHolder: this.pinDocumentInFileTextField
+
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.BtnAddDocumentLoading = false;
+            this.adddocumentdialog;
+            this.getFilesFromApi();
+            this.$refs.form.reset();
+          } else {
+            alert("Error adding document");
+          }
+        });
+    },
+
+      ///////////////////////////////////////////////////////////////
+
+      // ONE COMMENTED BLOCK
+
+  // handleFileUpload(event) {
+  //     this.pinDocumentInFileTextField = event.target.files[0];
+  //   },
+  //   submitForm() {
+
+  //           this.BtnAddDocumentLoading = true;
+  //     const formData = new FormData();
+  //     formData.append('FileHolder', this.file.FILE_NAME);
+  //     formData.append('DocumentNameHolder', this.documentNameInFileTextField);
+  //     formData.append('FolioNumberHolder', this.documentFolioNumberInFileTextField);
+  //     formData.append('DocPathHolder', this.pinDocumentInFileTextField);
+
+  //     axios.post('http://127.0.0.1:8000/api/AddDocumentRoute', formData)
+  //       .then(response => {
+  //         console.log(response.data);
+  //         this.BtnAddDocumentLoading = false;
+  //           this.adddocumentdialog;
+  //           this.getFilesFromApi();
+  //       })
+  //       .catch(error => {
+  //         console.error(error);
+  //       });
+  //   }
+
+
+// END ONE COMMENTED BLOCK
+
+
+// START RECENT BLOCK
+
+submitForm() {
+
+  this.BtnAddDocumentLoading = true;
+  const fileinput = this.$refs.fileInput.files[0];
+
+  const formData = new FormData();
+  formData.append('FileHolder', this.file.FILE_NAME);
+  formData.append('DocumentNameHolder', this.documentNameInFileTextField);
+  formData.append('FolioNumberHolder', this.documentFolioNumberInFileTextField);
+  formData.append('DocPathHolder', fileinput);
+
+  // alert(fileinput);
+
+  axios.post('http://127.0.0.1:8000/api/AddDocumentRoute', formData, {
+    headers : {
+      'Content-Type':'multipart/form-data'
     }
-  },
+  })
+    .then(response=>{
+      console.log(response.data.message);
+      this.BtnAddDocumentLoading = false;
+      this.adddocumentdialog = false;
+      this.getFilesFromApi();
+      this.$refs.addDocForm.reset();
+
+      // alert(response)
+    })
+      .catch(error => {
+          // console.error(error);
+      });
+
+}
+
+
+// END START RECENT BLOCK
+
+
+
+
+
+
+  ////////////////////////////////////////////////////////////////////////////
+  
+    
+  }
+  
+
+  ,
 
   mounted() {
     this.getFilesFromApi();

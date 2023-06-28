@@ -1,42 +1,36 @@
 <template>
   <div class="document">
-    <v-container fluid>
+    <v-container fluid> 
       <v-row>
         <v-col>
           <v-card>
             <v-card-title>
               <h4>DOCUMENTS</h4>
               <v-spacer></v-spacer>
-              <v-btn slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog ">
+              <v-btn slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog">
                 <v-icon>mdi-plus</v-icon>
                 <span class="text-capitalize">New Document</span>
               </v-btn>
             </v-card-title>
             <v-card-text>
               <div class="d-flex justify-end">
-                <v-text-field 
-                class="shrink ml-2" 
-                v-model="search" 
-                append-icon="mdi-magnify" 
-                label="Search">
+                <v-text-field class="shrink ml-2" v-model="search" append-icon="mdi-magnify" label="Search">
                 </v-text-field>
               </div>
               <v-data-table 
               dense 
-              :headers="headers" 
-              :items="documents" 
+              :headers="headers"  
+              :items="documents"  
               :items-per-page="10" 
               class="elevation-1"
-              :search="search" 
-              :loading="documentdataloading" 
-              loading-text="Loading... Please wait"
-              >
+              :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
                   <v-icon small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-eye-check </v-icon>
-                  <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
+
                 </template>
               </v-data-table>
             </v-card-text>
@@ -60,18 +54,17 @@
           </v-card-title>
           <v-card-text>
             <v-form class="px-3" ref="form">
-              <v-text-field label="File Name" v-model="documentNameTxtField"
-                prepend-icon="mdi-file"></v-text-field>
-              <v-text-field label="Folio Number" v-model="documentFolioNumberTxtField"
-                prepend-icon="mdi-file"></v-text-field>
-              <!-- <v-textarea label="File Description" v-model="fileDescriptionTxtField"
-                prepend-icon="mdi-file-question"></v-textarea> -->
-              <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
-                data-vv-name="select" prepend-icon="mdi-group" required></v-select>
+              
+              <v-autocomplete v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
+              placeholder="Select..." prepend-icon="mdi-group" required></v-autocomplete>
+              <v-autocomplete v-model="selectFile" :items="files" label="Select File"
+              placeholder="Select..." prepend-icon="mdi-folder-multiple" required></v-autocomplete>
               <!-- <v-select v-model="selectStatus" :items="filestatuses" label="File Status" data-vv-name="select"
                 prepend-icon="mdi-file-settings" required></v-select> -->
-                <v-select v-model="selectFile" :items="files" label="Select File" data-vv-name="select"
-                prepend-icon="mdi-file-settings" required></v-select>
+              <v-text-field id="fileNameTxtField" label="Document Name" v-model="documentNameTxtField"
+                prepend-icon="mdi-file"></v-text-field>
+              <v-text-field label="Folio Number" v-model="folioNumberTxtField"
+                prepend-icon="mdi-file-question"></v-text-field>
 
             </v-form>
           </v-card-text>
@@ -80,12 +73,12 @@
               @click="adddocumentdialog = !adddocumentdialog">
               Close
             </v-btn>
-            <v-btn class="primary ma-5" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right>
-              Add File</v-btn>
+            <v-btn class="primary ma-5" justify-end @click="addDocumentMethod" :loading="BtnAddDocumentLoading" right>
+              Add Document</v-btn>
           </div>
         </v-card>
       </v-dialog>
-      <!-- END ADD FILE MODAL -->
+      <!-- END ADD DOCUMENT MODAL -->
 
 
 
@@ -143,61 +136,6 @@
 
       <!-- END DELETE FILE MODAL -->
 
-      <!-- START ADD DOCUMENT MODAL -->
-      <v-dialog v-model="adddocumentdialog" max-width="500">
-        <v-card>
-          <v-card-title>
-            <h3>Add Document</h3>
-            <v-spacer></v-spacer>
-
-            <v-btn text color="grey" rounded @click="adddocumentdialog = !adddocumentdialog">
-              <span>Close</span>
-              <v-icon right>mdi-close-outline</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            <v-form class="px-3" ref="updateform">
-              <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
-              <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
-                prepend-icon="mdi-group"></v-text-field>
-              <v-text-field label="Document Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
-              <v-textarea label="Document Description" v-model="file.FILE_DESCRIPTION"
-                prepend-icon="mdi-group"></v-textarea>
-              <v-file-input v-model="fileDocuments" color="deep-purple accent-4" counter label="File input" multiple
-                placeholder="Select your files" prepend-icon="mdi-paperclip" outlined :show-size="1000">
-                <template v-slot:selection="{ index, text }">
-                  <v-chip v-if="index < 2" color="deep-purple accent-4" dark label small>
-                    {{ text }}
-                  </v-chip>
-
-                  <span v-else-if="index === 2" class="text-overline grey--text text--darken-3 mx-2">
-                    +{{ files.length - 2 }} File(s)
-                  </span>
-                </template>
-              </v-file-input>
-              <!-- <v-select
-                
-                v-model="selectCorrespondence"
-                :items="correspondences"
-                label="Select Correspondence"
-                data-vv-name="select"
-                prepend-icon="mdi-group"
-                required
-              ></v-select> -->
-
-            </v-form>
-          </v-card-text>
-          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
-            Add Document
-          </v-btn>
-        </v-card>
-      </v-dialog>
-
-      <!-- END ADD DOCUMENT MODAL -->
-
-
-
-
     </v-container>
   </div>
 </template>
@@ -206,30 +144,32 @@
 import axios from "axios";
 
 export default {
-  name: "file", // name of component view
+  name: "document", // name of component view
 
   data() {
     return {
 
       documentdataloading: false,
 
-      //ADD NEW FILE DATA
-      fileNameTxtField: "",
-      fileDescriptionTxtField: "",
-      selectStatus: "",
+      //ADD NEW DOCUMENT DATA
+      documentNameTxtField: "",
+      folioNumberTxtField: "",
+      // selectStatus: "", //IF TO ADD IT TO THE ADD DIALOG
 
 
       selectedcorrespondence: "", // from update model
-      selectCcorrespondence: "",
+      selectCorrespondence: "",
+      selectFile: "",
       correspondences: [],
+      files: [],
 
-      filestatuses: [
-        'CLOSED', 'OPEN'
-      ],
+      // filestatuses: [
+      //   'CLOSED', 'OPEN'
+      // ],
 
 
       adddocumentdialog: false,
-      BtnAddCorrespondenceLoading: false,
+      BtnAddDocumentLoading: false,
       search: "",
       // test: false,
 
@@ -238,7 +178,7 @@ export default {
 
 
 
-      //END ADD NEW FILE DATA
+      //END ADD NEW DOCUMENT DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -284,7 +224,7 @@ export default {
         },
         { text: "DOCUMENT NAME", value: "DOCUMENT_NAME" },
         { text: "FOLIO NUMBER", value: "FOLIO_NUMBER" },
-        // { text: "FOLIO NUMBER", value: "STATUS" },
+        // { text: "FILE STATUS", value: "STATUS" },
         { text: "CREATED AT", value: "created_at" },
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
@@ -310,25 +250,25 @@ export default {
     },
 
 
-    addFileMethod() {
-      this.BtnAddFileLoading = true;
+    addDocumentMethod() {
+      this.BtnAddDocumentLoading = true;
       axios
-        .post("http://127.0.0.1:8000/api/AddFileRoute", {
-          FileNameHolder: this.fileNameTxtField,
-          FileDescriptionHolder: this.fileDescriptionTxtField,
-          StatusHolder: this.selectStatus,
+        .post("http://127.0.0.1:8000/api/AddDocumentRoute", {
+          DocumentNameHolder: this.documentNameTxtField,
+          FolioNumberHolder: this.folioNumberTxtField,
+          fileHolder: this.selectFile,
           correspondenceHolder: this.selectCorrespondence
 
         })
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
-            this.BtnAddCorrespondenceLoading = false;
-            this.addfiledialog = false;
-            this.getFilesFromApi();
+            this.BtnAddDocumentLoading = false;
+            this.adddocumentdialog = false;
+            this.getDocumentsFromApi();
             this.$refs.form.reset();
           } else {
-            alert("Error adding file");
+            alert("Error adding Document");
           }
         });
     },
@@ -442,12 +382,36 @@ axios
 
         }
         )
+    },
+
+
+    selectfilemethod() {
+      axios
+        .get(`http://127.0.0.1:8000/api/ListFileRoute`)
+        .then((response) => {
+          if (response.status === 200) {
+            var files = response.data
+            console.log('steve' + files);
+            files.forEach(file => {
+              this.files.push(file.FILE_NAME);
+              // $zako = this.correspondences.push(correspondence.id); 
+              // alert($zako);
+
+            });
+            // this.deletefiledialog = true;
+          }
+        }
+        )
     }
+
+
+
   },
 
   mounted() {
     this.getDocumentsFromApi();
     this.selectcorrespondencemethod();
+    this.selectfilemethod();
   },
 };
 </script>
