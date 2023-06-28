@@ -269,6 +269,7 @@ export default {
         },
         { text: "FILE NAME", value: "FILE_NAME" },
         { text: "FILE DESCRIPTION", value: "FILE_DESCRIPTION" },
+        { text: "CORRESPONDENCE", value: "correspondence.CORRESPONDENCE_NAME" },
         { text: "FILE STATUS", value: "STATUS" },
         { text: "CREATED AT", value: "created_at" },
         { text: "UPDATED AT", value: "updated_at" },
