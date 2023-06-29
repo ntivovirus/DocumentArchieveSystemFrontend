@@ -224,7 +224,7 @@ export default {
         },
         { text: "DOCUMENT NAME", value: "DOCUMENT_NAME" },
         { text: "FOLIO NUMBER", value: "FOLIO_NUMBER" },
-        { text: "CORRESPONDENCE", value: "FOLIO_NUMBER" },
+        { text: "CORRESPONDENCE", value: "file.correspondence.CORRESPONDENCE_NAME" },
         { text: "FILE", value: "file.FILE_NAME" },
         { text: "FILE STATUS", value: "file.STATUS" },
         { text: "ADDED BY", value: "FOLIO_NUMBER" },
