@@ -4,7 +4,7 @@
       <!-- <v-toolbar-side-icon  @click="drawerSteve = !drawerSteve"></v-toolbar-side-icon> -->
       <v-toolbar-title class="text-uppercase grey--text" >
         <v-app-bar-nav-icon @click="drawerSteve = !drawerSteve"></v-app-bar-nav-icon>
-        <span class="font-weight-light">Archieve </span>
+        <span class="font-weight-light">Archive </span>
         <span>Management System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -23,7 +23,7 @@
       </div>
     <!-- new menu list-->
         <v-list nav shaped>
-          <v-list-item v-for="link in links" :key="link.text" router :to="link.route" >
+          <v-list-item class="white--text text--lighten-4 font-weight-black" v-for="link in links" :key="link.text" router :to="link.route" >
             <v-list-item-icon>
               <v-icon >{{ link.icon }}</v-icon>
             </v-list-item-icon>
