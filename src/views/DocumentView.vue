@@ -26,7 +26,7 @@
               :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-eye-check </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
@@ -113,7 +113,7 @@
       <!-- END UPDATE FILE MODAL -->
 
       <!-- START DELETE FILE MODAL -->
-      <v-dialog v-model="deletefiledialog" max-width="400">
+      <v-dialog v-model="deletedocumentdialog" max-width="400">
         <v-card>
           <v-card-title class="text-center">
             <h5>DELETE</h5>
@@ -124,10 +124,10 @@
           </v-card-text>
 
           <div class="text-center d-flex align-center justify-space-between">
-            <v-btn class=" primary ma-5" @click="deletefiledialog = !deletefiledialog">
+            <v-btn class=" primary ma-5" @click="deletedocumentdialog = !deletedocumentdialog">
               CANCEL
             </v-btn>
-            <v-btn class="ma-5" color="error" @click="deleteFileMethod" :loading="BtnDeleteFileLoading">
+            <v-btn class="ma-5" color="error" @click="deleteDocumentMethod" :loading="BtnDeleteDocumentLoading">
               DELETE
             </v-btn>
           </div>
@@ -184,7 +184,7 @@ export default {
 
       //UPDATE FILE DATA
       updatefiledialog: false,
-      fileID: null,
+      documentID: null,
       BtnUpdateFileLoading: false,
       file: {
         id: null,
@@ -199,7 +199,7 @@ export default {
 
       //DELETE FILE DATA
 
-      deletefiledialog: false,
+      deletedocumentdialog: false,
       BtnDeleteFileLoading: false,
 
       //END UPDATE FILE DATA
@@ -310,15 +310,15 @@ axios
 
 },
 
-    FetchDeleteFileDetails(FileId) {
+  FetchDeleteDocumentDetails(DocumentId) {
 
-      this.fileID = FileId;
+      this.documentID = DocumentId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+        .get(`http://127.0.0.1:8000/api/getdocumentupdatedetail/${this.documentID}`)
         .then((response) => {
           if (response.status === 200) {
-            this.file = response.data.File
-            this.deletefiledialog = true;
+            this.file = response.data.Document
+            this.deletedocumentdialog = true;
 
 
           }
@@ -350,18 +350,19 @@ axios
           })
     },
 
-    deleteFileMethod(FileId) {
-      this.BtnDeleteFileLoading = true,
-        this.FileID = FileId;
-      axios
-        .delete(`http://127.0.0.1:8000/api/deleteFileRoute/${this.fileID}`, {
+    deleteDocumentMethod(DocumentId) {
+      this.BtnDeleteDocumentLoading = true,
+        this.DocumentID = DocumentId;
+        alert(this.DocumentID);
+      axios 
+        .delete(`http://127.0.0.1:8000/api/deleteDocumentRoute/${this.documentID}`, {
 
         })
         .then((response) => {
           if (response.status === 200) {
-            this.getFilesFromApi();
-            this.deletefiledialog = false;
-            this.BtnDeleteFileLoading = false;
+            this.getDocumentsFromApi();
+            this.deletedocumentdialog = false;
+            this.BtnDeleteDocumentLoading = false;
           }
         })
     },

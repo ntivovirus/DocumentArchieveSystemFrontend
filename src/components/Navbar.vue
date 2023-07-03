@@ -19,7 +19,7 @@
           <v-avatar size="150">
             <img src="/Malawi-Gov.png" alt="Blantyre District Council Emblem"> 
           </v-avatar>
-          <!-- <pm class=" subheading grey--text">Blantyre District Council</pm> -->
+          <!-- <pm class=" subheading grey--text">Blantyre District Council</pm> --> 
       </div>
     <!-- new menu list-->
         <v-list nav shaped>
