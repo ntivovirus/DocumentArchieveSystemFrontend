@@ -85,15 +85,14 @@
           </v-card-text>
           <div class="text-center d-flex align-center justify-end">
           <v-btn
-           class="danger ma-5" 
+           class="grey ma-2" 
            justify-start 
-           color="grey"
            @click="addcorrespondencedialog = !addcorrespondencedialog"
            >
-           Close
+           CANCEL
            </v-btn>
           <v-btn
-            class="primary ma-5"
+            class="primary ma-2"
             justify-end
             @click="addCorrespondenceMethod"
             :loading="BtnAddCorrespondenceLoading"
@@ -142,13 +141,21 @@
               ></v-textarea>
             </v-form>
           </v-card-text>
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn
+            class=" grey ma-1"
+            @click="updatecorrespondencedialog = !updatecorrespondencedialog"
+          >
+            CANCEL
+            </v-btn>
           <v-btn
-            class="primary ma-5"
+            class="primary ma-2"
             @click="updateCorrespondenceMethod"
             :loading="BtnUpdateCorrespondenceLoading"
           >
             Update Correspondence
             </v-btn>
+          </div>
         </v-card>
       </v-dialog>
 
@@ -165,16 +172,16 @@
             
           </v-card-text>
 
-          <div class="text-center d-flex align-center justify-space-between">
+          <div class="text-center d-flex align-center justify-end">
           <v-btn
-            class=" primary ma-5"
+            class=" grey ma-2"
             @click="deletecorrespondencedialog = !deletecorrespondencedialog"
           >
             CANCEL
             </v-btn>
           <v-btn
-            class="ma-5"
-            color="error"
+            class="error ma-2"
+           
             @click="deleteCorrespondenceMethod"
             :loading="BtnDeleteCorrespondenceLoading"
           >
@@ -300,7 +307,7 @@ export default {
       
       this.correspondenceID= CorrespondenceId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.correspondenceID}`)
+        .get(`http://127.0.0.1:8000/api/getCorrespondenceupdatedetail/${this.correspondenceID}`)
         .then((response) => {
           if (response.status ===200) {
             this.correspondence = response.data.Correspondence
@@ -316,7 +323,7 @@ export default {
       
       this.correspondenceID= CorrespondenceId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.correspondenceID}`)
+        .get(`http://127.0.0.1:8000/api/getCorrespondenceupdatedetail/${this.correspondenceID}`)
         .then((response) => {
           if (response.status ===200) {
             this.correspondence = response.data.Correspondence

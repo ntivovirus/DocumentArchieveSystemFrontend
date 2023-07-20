@@ -23,12 +23,13 @@
               :items="documents"  
               :items-per-page="10" 
               class="elevation-1"
-              :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
+              :search="search" :loading="documentdataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
                   <v-icon small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-eye-check </v-icon>
+                  <v-icon small class="mr-5" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
+                  <v-icon small class="mr-5" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
 
                 </template>
@@ -39,7 +40,7 @@
       </v-row>
 
 
-      <!-- START ADD FILE MODAL -->
+      <!-- START ADD FILE MODAL --> 
 
       <v-dialog v-model="adddocumentdialog" max-width="500">
         <v-card>
@@ -69,11 +70,11 @@
             </v-form>
           </v-card-text>
           <div class="text-center d-flex align-center justify-end">
-            <v-btn class="danger ma-5" justify-start color="grey"
+            <v-btn class="grey ma-2" justify-start 
               @click="adddocumentdialog = !adddocumentdialog">
-              Close
+              CANCEL
             </v-btn>
-            <v-btn class="primary ma-5" justify-end @click="addDocumentMethod" :loading="BtnAddDocumentLoading" right>
+            <v-btn class="primary ma-2" justify-end @click="addDocumentMethod" :loading="BtnAddDocumentLoading" right>
               Add Document</v-btn>
           </div>
         </v-card>
@@ -104,9 +105,15 @@
                 prepend-icon="mdi-group" required></v-select>
             </v-form>
           </v-card-text>
-          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class="grey ma-2" justify-start 
+              @click="updatefiledialog = !updatefiledialog">
+              CANCEL
+            </v-btn>
+          <v-btn class="primary ma-2" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
             Update file
           </v-btn>
+          </div>
         </v-card>
       </v-dialog>
 
@@ -123,11 +130,11 @@
 
           </v-card-text>
 
-          <div class="text-center d-flex align-center justify-space-between">
-            <v-btn class=" primary ma-5" @click="deletedocumentdialog = !deletedocumentdialog">
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class=" grey ma-2" @click="deletedocumentdialog = !deletedocumentdialog">
               CANCEL
             </v-btn>
-            <v-btn class="ma-5" color="error" @click="deleteDocumentMethod" :loading="BtnDeleteDocumentLoading">
+            <v-btn class="error ma-2" @click="deleteDocumentMethod" :loading="BtnDeleteDocumentLoading">
               DELETE
             </v-btn>
           </div>
@@ -135,6 +142,18 @@
       </v-dialog>
 
       <!-- END DELETE FILE MODAL -->
+
+
+      <!-- START DOCUMENT PREVIEW MODAL -->
+      
+       
+            <div>   
+               <v-img :src="documenturl" /> 
+               </div>
+        
+     
+
+      <!-- END DOCUMENT PREVIEW MODAL -->
 
     </v-container>
   </div>
@@ -150,6 +169,14 @@ export default {
     return {
 
       documentdataloading: false,
+
+
+      //DOCUMENT PREVIEW
+      previewdocumentdialog: false,
+      documenturl: null,
+
+      //END DOCUMENT PREVIEW
+
 
       //ADD NEW DOCUMENT DATA
       documentNameTxtField: "",
@@ -200,7 +227,7 @@ export default {
       //DELETE FILE DATA
 
       deletedocumentdialog: false,
-      BtnDeleteFileLoading: false,
+      BtnDeleteDocumentLoading: false,
 
       //END UPDATE FILE DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,7 +264,7 @@ export default {
 
   methods: {
 
-    getDocumentsFromApi() {
+    getDocumentsFromApi() { // USED
       this.documentdataloading = true;
       axios
         .get("http://127.0.0.1:8000/api/ListDocumentRoute")
@@ -293,7 +320,7 @@ export default {
 
     },
 
-    FetchDocumentFileDetails(FileId) {
+    FetchDocumentFileDetails(FileId) {  
 
 this.fileID = FileId;
 axios
@@ -310,7 +337,7 @@ axios
 
 },
 
-  FetchDeleteDocumentDetails(DocumentId) {
+  FetchDeleteDocumentDetails(DocumentId) { // USED
 
       this.documentID = DocumentId;
       axios
@@ -325,6 +352,39 @@ axios
         })
 
     },
+
+    FetchDownloadDocumentDetails(DocumentId) { // USED
+
+this.documentID = DocumentId;
+axios
+  .get(`http://127.0.0.1:8000/api/downloadDocumentRoute/${this.documentID}`)
+  .then((response) => {
+    if (response.status === 200) {
+
+    }
+  })
+
+},
+
+FetchPreviewDocumentDetails(DocumentId) { // USED
+
+this.documentID = DocumentId;
+this.previewdocumentdialog = true;
+
+axios
+  .get(`http://127.0.0.1:8000/api/previewDocumentRoute/${this.documentID}`)
+  .then((response) => {
+    // if (response.status === 200) {
+
+      this.documenturl = response.data.url;
+
+    // }
+  })
+  .catch(error => {
+        console.error(error);
+      });
+
+},
 
     updateFileMethod() {
       this.BtnUpdateFileLoading = true,
@@ -353,7 +413,6 @@ axios
     deleteDocumentMethod(DocumentId) {
       this.BtnDeleteDocumentLoading = true,
         this.DocumentID = DocumentId;
-        alert(this.DocumentID);
       axios 
         .delete(`http://127.0.0.1:8000/api/deleteDocumentRoute/${this.documentID}`, {
 

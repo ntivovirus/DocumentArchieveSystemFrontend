@@ -64,11 +64,11 @@
             </v-form>
           </v-card-text>
           <div class="text-center d-flex align-center justify-end">
-            <v-btn class="danger ma-5" justify-start color="grey"
-              @click="addcorrespondencedialog = !addcorrespondencedialog">
-              Close
+            <v-btn class="grey ma-2" justify-start 
+              @click="addfiledialog = !addfiledialog">
+              CANCEL
             </v-btn>
-            <v-btn class="primary ma-5" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right>
+            <v-btn class="primary ma-2" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right>
               Add File</v-btn>
           </div>
         </v-card>
@@ -78,7 +78,7 @@
 
 
       <!-- START UPDATE FILE MODAL -->
-      <v-dialog v-model="updatefiledialog" max-width="500">
+      <v-dialog v-model="updatefiledialog" max-width="500"> 
         <v-card>
           <v-card-title>
             <h3>Update File</h3>
@@ -99,9 +99,15 @@
                 prepend-icon="mdi-group" required></v-select>
             </v-form>
           </v-card-text>
-          <v-btn class="primary ma-5" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class="grey ma-2" justify-start 
+              @click="updatefiledialog = !updatefiledialog">
+              CANCEL
+            </v-btn>
+          <v-btn class="primary ma-2" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
             Update file
           </v-btn>
+          </div>
         </v-card>
       </v-dialog>
 
@@ -118,11 +124,11 @@
 
           </v-card-text>
 
-          <div class="text-center d-flex align-center justify-space-between">
-            <v-btn class=" primary ma-5" @click="deletefiledialog = !deletefiledialog">
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class="grey ma-2" @click="deletefiledialog = !deletefiledialog">
               CANCEL
             </v-btn>
-            <v-btn class="ma-5" color="error" @click="deleteFileMethod" :loading="BtnDeleteFileLoading">
+            <v-btn class="ma-2" color="error" @click="deleteFileMethod" :loading="BtnDeleteFileLoading">
               DELETE
             </v-btn>
           </div>
@@ -163,9 +169,14 @@
             </v-form>
           </v-card-text>
           <!-- <v-btn class="primary ma-5" @click="addDocumentInFileMethod" :loading="BtnAddDocumentLoading"> -->
-          <v-btn class="primary ma-5" @click="submitForm" :loading="BtnAddDocumentLoading">
+          <div class="text-center d-flex align-center justify-end">
+            <v-btn class="grey ma-2" @click="adddocumentdialog = !adddocumentdialog">
+              CANCEL
+            </v-btn>
+          <v-btn class="primary ma-2" @click="submitForm" :loading="BtnAddDocumentLoading">
             Add Document
           </v-btn>
+          </div>
         </v-card>
       </v-dialog>
 
@@ -323,7 +334,7 @@ export default {
 
       this.fileID = FileId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+        .get(`http://127.0.0.1:8000/api/getFileupdatedetail/${this.fileID}`)
         .then((response) => {
           if (response.status === 200) {
             this.file = response.data.File
@@ -340,7 +351,7 @@ export default {
 
 this.fileID = FileId;
 axios
-  .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+  .get(`http://127.0.0.1:8000/api/getFileupdatedetail/${this.fileID}`)
   .then((response) => {
     if (response.status === 200) {
       this.file = response.data.File
@@ -357,7 +368,7 @@ axios
 
       this.fileID = FileId;
       axios
-        .get(`http://127.0.0.1:8000/api/getupdatedetail/${this.fileID}`)
+        .get(`http://127.0.0.1:8000/api/getFileupdatedetail/${this.fileID}`)
         .then((response) => {
           if (response.status === 200) {
             this.file = response.data.File

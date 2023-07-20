@@ -4,357 +4,387 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-card-title>USERS</v-card-title>
+            <v-card-title>
+              <h4>USERS</h4>
+              <v-spacer></v-spacer>
+              <v-btn
+                slot="activator"
+                depressed
+                class="primary"
+                @click="showAddUserDialog"
+              >
+                <v-icon>mdi-plus</v-icon>
+                <span class="text-capitalize">new user</span>
+              </v-btn>
+            </v-card-title>
             <v-card-text>
-              <h1>zako aise</h1>
+              <div class="d-flex justify-end">
+                <v-text-field
+                  class="shrink ml-2"
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                >
+                </v-text-field>
+              </div>
+              <v-data-table dense
+                :headers="headers"
+                :items="users"
+                :items-per-page="10"
+                class="elevation-1"
+                :search="search"
+                :loading="userdataloading"
+                loading-text="Loading... Please wait"
+              >
+                <template v-slot:item.actions="{ item }">
+                  <v-icon small class="mr-5" @click="FetchUserDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon small @click="FetchDeleteUserDetails(item.id)"> mdi-delete </v-icon>
+                </template>
+              </v-data-table>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
+
+    
+<!-- START ADD USER MODAL -->
+
+      <v-dialog v-model="adduserdialog" max-width="500">
+        <v-card>
+          <v-card-title>
+            <h3>Add New User</h3>
+            <v-spacer></v-spacer>
+
+            <v-btn 
+            text color="grey"
+            rounded
+            @click="adduserdialog = !adduserdialog"
+            >
+              <span>Close</span>
+              <v-icon right>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-form class="px-3" ref="form">
+              <v-text-field
+                label="User Full Name"
+                v-model="userFullNameTxtField"
+                prepend-icon="mdi-account-box"
+              ></v-text-field>
+              <v-text-field
+                label="User Email"
+                v-model="userEmailTxtField"
+                prepend-icon="mdi-email"
+              ></v-text-field>
+              <v-text-field
+                label="Password"
+                v-model="userPasswordTxtField"
+                prepend-icon="mdi-lock" 
+              ></v-text-field>
+              <v-select v-model="userRoleSelectField" :items="selectUserRole" label="User Role"
+                data-vv-name="select" prepend-icon="mdi-account-group" required></v-select>
+              
+            </v-form>
+          </v-card-text>
+          <div class="text-center d-flex align-center justify-end">
+          <v-btn
+           class="danger ma-5" 
+           justify-start 
+           color="grey"
+           @click="adduserdialog = !adduserdialog"
+           >
+           Close
+           </v-btn>
+          <v-btn
+            class="primary ma-5"
+            justify-end
+            @click="addUserMethod"
+            :loading="BtnAddCorrespondenceLoading"
+            right
+          >
+            Add User</v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+<!-- END ADD USER MODAL -->
+
+
+      
+<!-- START UPDATE USER MODAL -->
+      <v-dialog v-model="updateuserdialog" max-width="500">
+        <v-card>
+          <v-card-title>
+            <h3>Update User</h3>
+            <v-spacer></v-spacer>
+
+            <v-btn 
+            text color="grey"
+            rounded
+            @click="updateuserdialog = !updateuserdialog"
+            >
+              <span>Close</span>
+              <v-icon right>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-form class="px-3" ref="updateform">
+              <v-text-field
+                label="User Full Name"
+                v-model="user.name" 
+                prepend-icon="mdi-account-box"
+              ></v-text-field>
+              <v-text-field
+                label="User Email"
+                v-model="user.email"
+                prepend-icon="mdi-email"
+              ></v-text-field>
+              <v-select 
+               v-model="user.role" 
+               :items="selectUserRole"
+               prepend-icon="mdi-account-group" 
+               required>
+              </v-select>
+            </v-form>
+          </v-card-text>
+          <div class="text-center d-flex align-center justify-end">
+          <v-btn
+           class="grey ma-2" 
+           justify-start 
+           @click="updateuserdialog  = !updateuserdialog "
+           >
+           Close
+           </v-btn>
+          <v-btn
+            class="primary ma-2"
+            @click="updateUserMethod"
+            :loading="BtnUpdateUserLoading"
+            
+          >
+            Update User
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+
+<!-- END UPDATE USER MODAL -->
+
+<!-- START DELETE USER MODAL -->
+<v-dialog v-model="deleteuserdialog" max-width="400">
+        <v-card>
+          <v-card-title class="text-center">
+            <h5>DELETE</h5>
+           
+          </v-card-title>
+          <v-card-text>
+            
+          </v-card-text>
+
+          <div class="text-center d-flex align-center justify-end">
+          <v-btn
+            class=" grey ma-2"
+            @click="deleteuserdialog = !deleteuserdialog"
+          >
+            CANCEL
+            </v-btn>
+          <v-btn
+            class="ma-2"
+            color="error"
+            @click="deleteUserMethod"
+            :loading="BtnDeleteUserLoading"
+          >
+            DELETE
+            </v-btn>
+            </div>
+        </v-card>
+      </v-dialog>
+
+<!-- END DELETE USER MODAL -->
+
+
+
     </v-container>
   </div>
 </template>
 
-<!--START TRIAL-->
-
-<template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              New Item
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
-    </template>
-  </v-data-table>
-</template>
-
-<!--END START TRIAL-->
-
-
 <script>
+import axios from "axios";
+
 export default {
-  
-}
-</script>
+  name: "user", // name of component view
 
-<!--START SCRIPT TRIAL-->
+  data() {
+    return {
+      //ADD NEW CORRESPONDENCE DATA
+      userFullNameTxtField: "",
+      userEmailTxtField: "",
+      userPasswordTxtField: "",
+      userRoleSelectField:"",
+      selectUserRole:["Administrator","User"],
+      adduserdialog: false,
+      BtnAddUserLoading: false,
+      search: "",
+      test: false,
+      userdataloading: false,
 
-<script>
-  export default {
-    data: () => ({
-      dialog: false,
-      dialogDelete: false,
+      //END ADD NEW USER DATA
+      ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+      //UPDATE USER DATA
+      updateuserdialog: false,
+      userID: null,
+      BtnUpdateUserLoading: false,
+      user: {
+        name:null, 
+        email:null, 
+        role:null
+      },
+
+      //END UPDATE USER DATA
+      ////////////////////////////////////////////////////////////////////////////////////////////
+
+      //DELETE USER DATA
+
+      deleteuserdialog: false,
+      BtnDeleteUserLoading: false,       
+
+      //END UPDATE USER DATA
+      ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+      users: [],
       headers: [
         {
-          text: 'Dessert (100g serving)',
-          align: 'start',
+          text: "ID",
+          align: "start",
           sortable: false,
-          value: 'name',
+          value: "id",
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: "USER FULL NAME", value: "name" },
+        { text: "EMAIL", value: "email" },
+        { text: "ROLE", value: "role" },
+        { text: "CREATED AT", value: "created_at" },
+        { text: "UPDATED AT", value: "updated_at" },
+        { text: "ACTION", sortable: false, value: "actions" },
       ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-    }),
+    };
+  },
 
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
+  methods: {
+
+    getUsersFromApi() {
+      this.userdataloading=true;
+      axios
+        .get("http://127.0.0.1:8000/api/ListUserRoute")
+        .then((response) => {
+          if (response.status === 200) {
+            this.users = response.data;
+      this.userdataloading=false;
+
+          } else {
+            alert("Error Loading Users data");
+          }
+        });
+    },
+      
+    showAddUserDialog() {
+      this.adduserdialog = true;
     },
 
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
-    },
-
-    created () {
-      this.initialize()
-    },
-
-    methods: {
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
-      },
-
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
+    addUserMethod() {
+      this.BtnAddUserLoading = true;
+      axios
+        .post("http://127.0.0.1:8000/api/AddUserRoute", {
+          UserfullnameHolder: this.userFullNameTxtField,
+          UserEmailHolder: this.userEmailTxtField,
+          UserPasswordHolder: this.userPasswordTxtField,
+          UserRoleHolder: this.userRoleSelectField
         })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
-      },
+        .then((response) => {
+          if (response.status === 200) {
+            this.BtnAddUserLoading = false;
+            this.adduserdialog = false;
+            this.getUsersFromApi();
+            this.$refs.form.reset();
+          } else {
+            alert("Error adding User");
+          }
+        });
     },
-  }
+
+    FetchUserDetails(UserId) {
+      
+      this.userID= UserId;
+      axios
+        .get(`http://127.0.0.1:8000/api/getUserupdatedetail/${this.userID}`)
+        .then((response) => {
+          if (response.status ===200) {
+            this.user = response.data.User
+
+            this.updateuserdialog = true;
+
+         }
+        })  
+      
+    },
+
+    FetchDeleteUserDetails(UserId) {
+      
+      this.userID= UserId;
+      axios
+        .get(`http://127.0.0.1:8000/api/getUserupdatedetail/${this.userID}`)
+        .then((response) => {
+          if (response.status ===200) {
+            this.user = response.data.User
+
+            this.deleteuserdialog = true;
+
+
+         }
+        })  
+      
+    },
+
+    updateUserMethod(UserId) {
+        this.BtnUpdateUserLoading = true,
+        this.UserID = UserId;
+        axios
+          .put(`http://127.0.0.1:8000/api/updateUserRoute/${this.userID}`, {
+            UserFullNameHolder: this.user.name,
+            UserEmailHolder: this.user.email,
+            UserRoleHolder: this.user.role
+          })
+          .then((response) => {
+            if (response.status ===200) {
+              this.getUsersFromApi();
+              this.updateuserdialog = false;
+              this.BtnUpdateUserLoading = false;
+
+            }
+          })
+    },
+
+    deleteUserMethod(UserId) {
+        this.BtnDeleteUserLoading = true,
+        this.UserID = UserId;
+        axios
+          .delete(`http://127.0.0.1:8000/api/deleteUserRoute/${this.userID}`, {
+           
+          })
+          .then((response) => {
+            if (response.status ===200) {
+              this.getUsersFromApi();
+              this.deleteuserdialog = false;
+              this.BtnDeleteUserLoading = false;
+            }
+          })
+    }
+  },
+
+  mounted() {
+    this.getUsersFromApi();
+    //this.addSectionMethod();
+  },
+};
 </script>
-
-<!--END START SCRIPT TRIAL-->
