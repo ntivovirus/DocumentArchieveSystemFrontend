@@ -54,18 +54,18 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="form">
+            <v-form class="px-3" ref="form" v-model="valid" lazy-validation>
               
               <v-autocomplete v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
-              placeholder="Select..." prepend-icon="mdi-group" required></v-autocomplete>
+              placeholder="Select..." prepend-icon="mdi-group" :rules="nameRules" required></v-autocomplete>
               <v-autocomplete v-model="selectFile" :items="files" label="Select File"
-              placeholder="Select..." prepend-icon="mdi-folder-multiple" required></v-autocomplete>
+              placeholder="Select..." prepend-icon="mdi-folder-multiple" :rules="nameRules" required></v-autocomplete>
               <!-- <v-select v-model="selectStatus" :items="filestatuses" label="File Status" data-vv-name="select"
                 prepend-icon="mdi-file-settings" required></v-select> -->
               <v-text-field id="fileNameTxtField" label="Document Name" v-model="documentNameTxtField"
-                prepend-icon="mdi-file"></v-text-field>
-              <v-text-field label="Folio Number" v-model="folioNumberTxtField"
-                prepend-icon="mdi-file-question"></v-text-field>
+                prepend-icon="mdi-file" :rules="nameRules" required></v-text-field>
+              <v-text-field type="number" label="Folio Number" v-model="folioNumberTxtField"
+                prepend-icon="mdi-file-question" :rules="nameRules" required></v-text-field>
 
             </v-form>
           </v-card-text>
@@ -74,7 +74,7 @@
               @click="adddocumentdialog = !adddocumentdialog">
               CANCEL
             </v-btn>
-            <v-btn class="primary ma-2" justify-end @click="addDocumentMethod" :loading="BtnAddDocumentLoading" right>
+            <v-btn class="primary ma-2" justify-end @click="addDocumentMethod" :loading="BtnAddDocumentLoading" right :disabled="!valid">
               Add Document</v-btn>
           </div>
         </v-card>
@@ -96,7 +96,7 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="updateform">
+            <v-form class="px-3" ref="updateform" v-model="valid" lazy-validation>
               <v-text-field label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-textarea label="File Description" v-model="file.FILE_DESCRIPTION" prepend-icon="mdi-group"></v-textarea>
               <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
@@ -147,10 +147,7 @@
       <!-- START DOCUMENT PREVIEW MODAL -->
       
        
-            <div>   
-               <v-img :src="documenturl" /> 
-               </div>
-        
+                 
      
 
       <!-- END DOCUMENT PREVIEW MODAL -->
@@ -259,6 +256,21 @@ export default {
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],
+
+       // VALIDATION RULES
+       valid: true,
+
+        nameRules: [
+          v => !!v || 'This is a required field',
+          v => (v && v.length >= 3) || 'Must be greater than 3 characters',
+        ],
+
+        numberRules: [
+          v => !!v || 'This is a required field! Please Enter Folio number',
+          ],
+
+// END VALIDATION RULES
+
     };
   },
 

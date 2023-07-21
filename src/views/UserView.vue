@@ -65,24 +65,31 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="form">
+            <v-form class="px-3" ref="form" v-model="valid" lazy-validation>
               <v-text-field
                 label="User Full Name"
                 v-model="userFullNameTxtField"
                 prepend-icon="mdi-account-box"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-text-field
                 label="User Email"
                 v-model="userEmailTxtField"
                 prepend-icon="mdi-email"
+                :rules="emailRules"
+                required
               ></v-text-field>
               <v-text-field
                 label="Password"
                 v-model="userPasswordTxtField"
                 prepend-icon="mdi-lock" 
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-select v-model="userRoleSelectField" :items="selectUserRole" label="User Role"
-                data-vv-name="select" prepend-icon="mdi-account-group" required></v-select>
+                data-vv-name="select" prepend-icon="mdi-account-group" :rules="nameRules"
+                required></v-select>
               
             </v-form>
           </v-card-text>
@@ -101,6 +108,7 @@
             @click="addUserMethod"
             :loading="BtnAddCorrespondenceLoading"
             right
+            :disabled="!valid"
           >
             Add User</v-btn>
           </div>
@@ -127,22 +135,26 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="updateform">
+            <v-form class="px-3" ref="updateform" v-model="valid" lazy-validation>
               <v-text-field
                 label="User Full Name"
                 v-model="user.name" 
                 prepend-icon="mdi-account-box"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-text-field
                 label="User Email"
                 v-model="user.email"
                 prepend-icon="mdi-email"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-select 
                v-model="user.role" 
                :items="selectUserRole"
                prepend-icon="mdi-account-group" 
-               required>
+               :rules="nameRules">
               </v-select>
             </v-form>
           </v-card-text>
@@ -158,6 +170,7 @@
             class="primary ma-2"
             @click="updateUserMethod"
             :loading="BtnUpdateUserLoading"
+            :disabled="!valid"
             
           >
             Update User
@@ -268,6 +281,26 @@ export default {
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],
+
+      // VALIDATION RULES
+      valid: true,
+
+      nameRules: [
+        v => !!v || 'This is a required field',
+        v => (v && v.length >= 3) || 'Must be greater than 3 characters',
+      ],
+
+      numberRules: [
+        v => !!v || 'This is a required field! Please Enter Folio number',
+        ],
+
+  emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+      ],
+
+// END VALIDATION RULES
+
     };
   },
 

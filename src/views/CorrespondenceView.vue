@@ -65,21 +65,28 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="form">
+            <v-form class="px-3" ref="form" v-model="valid" lazy-validation>
               <v-text-field
                 label="Correspondence Name"
                 v-model="correspondenceNameTxtField"
                 prepend-icon="mdi-group"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-text-field
                 label="Correspondence Code Name"
                 v-model="correspondenceCodeNameTxtField"
                 prepend-icon="mdi-group"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-textarea
                 label="Correspondence Description"
                 v-model="correspondenceDescriptionTxtField"
                 prepend-icon="mdi-pencil"
+                :counter="4"
+                :rules="nameRules"
+                required
               ></v-textarea>
             </v-form>
           </v-card-text>
@@ -92,6 +99,7 @@
            CANCEL
            </v-btn>
           <v-btn
+            :disabled="!valid"
             class="primary ma-2"
             justify-end
             @click="addCorrespondenceMethod"
@@ -123,21 +131,28 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="updateform">
+            <v-form class="px-3" ref="updateform" v-model="valid" lazy-validation>
               <v-text-field
                 label="Correspondence Name"
                 v-model="correspondence.CORRESPONDENCE_NAME"
                 prepend-icon="mdi-group"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-text-field
                 label="Correspondence Code Name"
                 v-model="correspondence.CORRESPONDENCE_CODENAME"
                 prepend-icon="mdi-group"
+                :rules="nameRules"
+                required
               ></v-text-field>
               <v-textarea
                 label="Section Description"
                 v-model="correspondence.CORRESPONDENCE_DESCRIPTION"
                 prepend-icon="mdi-pencil"
+                :counter="4"
+                :rules="nameRules"
+                required
               ></v-textarea>
             </v-form>
           </v-card-text>
@@ -149,6 +164,7 @@
             CANCEL
             </v-btn>
           <v-btn
+            :disabled="!valid"
             class="primary ma-2"
             @click="updateCorrespondenceMethod"
             :loading="BtnUpdateCorrespondenceLoading"
@@ -207,6 +223,8 @@ export default {
 
   data() {
     return {
+
+      
       //ADD NEW CORRESPONDENCE DATA
       correspondenceNameTxtField: "",
       correspondenceCodeNameTxtField: "",
@@ -259,10 +277,28 @@ export default {
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],
+
+        // VALIDATION RULES
+      valid: true,
+
+      nameRules: [
+        v => !!v || 'This is a required field',
+        v => (v && v.length >= 3) || 'Must be greater than 3 characters',
+      ],
+
+
+      // END VALIDATION RULES
+
     };
   },
 
   methods: {
+
+    // VALIDATION METHODS
+   
+
+
+    // END VALIDATION NOTES
 
     getCorrespondencesFromApi() {
       this.correspondencedataloading=true;

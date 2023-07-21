@@ -51,15 +51,17 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="form">
+            <v-form class="px-3" ref="AddFileForm" v-model="valid" lazy-validation>
               <v-text-field id="fileNameTxtField" label="File Name" v-model="fileNameTxtField"
-                prepend-icon="mdi-file"></v-text-field>
+                prepend-icon="mdi-file" :rules="nameRules"
+                required></v-text-field>
               <v-textarea label="File Description" v-model="fileDescriptionTxtField"
-                prepend-icon="mdi-file-question"></v-textarea>
+                prepend-icon="mdi-file-question" :counter="4" :rules="nameRules"
+                required></v-textarea>
               <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
-                data-vv-name="select" prepend-icon="mdi-group" required></v-select>
+                data-vv-name="select" prepend-icon="mdi-group" ></v-select>
               <v-select v-model="selectStatus" :items="filestatuses" label="File Status" data-vv-name="select"
-                prepend-icon="mdi-file-settings" required></v-select>
+                prepend-icon="mdi-file-settings" ></v-select>
 
             </v-form>
           </v-card-text>
@@ -68,7 +70,7 @@
               @click="addfiledialog = !addfiledialog">
               CANCEL
             </v-btn>
-            <v-btn class="primary ma-2" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right>
+            <v-btn class="primary ma-2" justify-end @click="addFileMethod" :loading="BtnAddFileLoading" right :disabled="!valid">
               Add File</v-btn>
           </div>
         </v-card>
@@ -90,9 +92,11 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="updateform">
-              <v-text-field label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
-              <v-textarea label="File Description" v-model="file.FILE_DESCRIPTION" prepend-icon="mdi-group"></v-textarea>
+            <v-form class="px-3" ref="updateform" v-model="valid" lazy-validation>
+              <v-text-field label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group" :rules="nameRules"
+                required></v-text-field>
+              <v-textarea label="File Description" v-model="file.FILE_DESCRIPTION" prepend-icon="mdi-group" :counter="4" :rules="nameRules"
+                required></v-textarea>
               <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
                 data-vv-name="select" prepend-icon="mdi-group" required></v-select>
               <v-select v-model="file.STATUS" :items="filestatuses" label="File Status" data-vv-name="select"
@@ -104,7 +108,7 @@
               @click="updatefiledialog = !updatefiledialog">
               CANCEL
             </v-btn>
-          <v-btn class="primary ma-2" @click="updateFileMethod" :loading="BtnUpdateFileLoading">
+          <v-btn class="primary ma-2" @click="updateFileMethod" :loading="BtnUpdateFileLoading" :disabled="!valid">
             Update file
           </v-btn>
           </div>
@@ -150,14 +154,14 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-          <v-form class="px-3" ref="addDocForm"  enctype="multipart/form-data">
+          <v-form class="px-3" ref="addDocForm"  enctype="multipart/form-data" v-model="valid" lazy-validation>
               <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
                 prepend-icon="mdi-group"></v-text-field>
-              <v-text-field label="Document Name" v-model="documentNameInFileTextField" prepend-icon="mdi-group"></v-text-field>
-              <v-text-field label="Folio Number" v-model="documentFolioNumberInFileTextField"
-                prepend-icon="mdi-group"></v-text-field>
-              <input type="file"    ref="fileInput"/>
+              <v-text-field label="Document Name" v-model="documentNameInFileTextField" prepend-icon="mdi-group" :rules="nameRules" required></v-text-field>
+              <v-text-field label="Folio Number" type="number" v-model="documentFolioNumberInFileTextField"
+                prepend-icon="mdi-group"  :rules="numberRules" required></v-text-field>
+              <input type="file"    ref="fileInput" required/>
 
                 <!-- <v-file-input
                   clearable
@@ -173,7 +177,7 @@
             <v-btn class="grey ma-2" @click="adddocumentdialog = !adddocumentdialog">
               CANCEL
             </v-btn>
-          <v-btn class="primary ma-2" @click="submitForm" :loading="BtnAddDocumentLoading">
+          <v-btn class="primary ma-2" @click="submitForm" :loading="BtnAddDocumentLoading" :disabled="!valid">
             Add Document
           </v-btn>
           </div>
@@ -199,6 +203,8 @@ export default {
 
   data() {
     return {
+
+     
 
       filedataloading: false,
 
@@ -286,10 +292,39 @@ export default {
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],
+
+       // VALIDATION RULES
+       valid: true,
+
+nameRules: [
+  v => !!v || 'This is a required field',
+  v => (v && v.length >= 3) || 'Must be greater than 3 characters',
+],
+
+numberRules: [
+  v => !!v || 'This is a required field',
+  // v =>  || 'Please enter an integer',
+  // v => this.documentFolioNumberInFileTextField=this.documentFolioNumberInFileTextField.replace(/[^0-9]/g, "")
+],
+
+// END VALIDATION RULES
+
     };
   },
 
   methods: {
+
+       // VALIDATION METHODS 
+
+      //  filterNonNumeric() {
+			// 		// Replace non-numeric characters with an empty string
+			// 		// this.documentFolioNumberInFileTextField = this.documentFolioNumberInFileTextField.replace(/[^0-9]/g, "");
+      //     // this.documentFolioNumberInFileTextField = this.documentFolioNumberInFileTextField.replace(/[^0-9]/g, "");
+			// 	},
+
+
+       // VALIDATION METHODS
+
 
     getFilesFromApi() {
       this.filedataloading = true;
@@ -551,6 +586,7 @@ submitForm() {
   mounted() {
     this.getFilesFromApi();
     this.selectcorrespondencemethod();
+    // filterNonNumeric();
   },
 };
 </script>
