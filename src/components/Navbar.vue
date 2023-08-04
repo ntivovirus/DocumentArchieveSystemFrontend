@@ -1,4 +1,5 @@
 <template>
+  <div>
   <nav>
     <v-app-bar flat app>
       <!-- <v-toolbar-side-icon  @click="drawerSteve = !drawerSteve"></v-toolbar-side-icon> -->
@@ -62,6 +63,8 @@
       <!-- END OLD WAY -->
     </v-navigation-drawer>
   </nav>
+  <router-view />
+</div>
 </template>
 
 <script>
