@@ -106,7 +106,7 @@
             class="primary ma-5"
             justify-end
             @click="addUserMethod"
-            :loading="BtnAddCorrespondenceLoading"
+            :loading="BtnAddUserLoading"
             right
             :disabled="!valid"
           >
