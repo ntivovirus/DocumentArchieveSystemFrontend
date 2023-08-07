@@ -26,6 +26,9 @@ export default {
   data() {
     return {
 
+        useremailTxtField: '',
+        passwordTxtField: '',
+
       
     };
   },

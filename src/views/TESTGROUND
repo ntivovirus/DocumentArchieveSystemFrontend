@@ -1,0 +1,36 @@
+
+
+const router = new Router({
+  mode: "history",
+  routes: [
+    {
+      path: "/",
+      name: "",
+      redirect: "home",
+      component: () =>
+        import(
+          /* webpackChunkName: "dashboard" */ "@/containers/dashboard/Dashboard"
+        ),
+      children: [
+        {
+          path: "/home",
+          name: "home",
+          component: () =>
+            import(/* webpackChunkName: "home" */ "./../views/Home"),
+        },
+        {
+          path: "/about",
+          name: "about",
+          component: () =>
+            import(/* webpackChunkName: "about" */ "./../views/About"),
+        },
+      ],
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./../views/Login"),
+    },
+  ],
+});
