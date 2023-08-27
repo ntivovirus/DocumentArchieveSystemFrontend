@@ -83,7 +83,36 @@ export default {
       {text: 'User Settings', icon: 'mdi-account-settings', route: '/usersetting'},
     ]
 
+    // steve : (const token = sessionStorage.getItem('api_token'));
+
     }
+  },
+  methods: {
+
+    checksessionman(){
+
+       zokonda = this.sessionStorage.getItem('api_token')
+
+      if(zokonda){
+        alert(zokonda);
+      }
+      else{
+        this.$router.push({path: '/login'}); 
+
+      }
+
+      
+    
+
+
+    }
+   
+
+  },
+  mounted () {
+
+    this.checksessionman();
+
   }
 }
 
