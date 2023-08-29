@@ -7,7 +7,7 @@
                 <v-text-field v-model="munthu.passwordTxtField" variant="outlined" type="password" label="password"></v-text-field>
                 <a href="#" class="text-body-2 font-weight-regular">Forgot Password?</a>
 
-                <v-btn type="submit" color="primary" block class="mt-2">Sign in</v-btn>
+                <v-btn type="submit" color="primary" block class="mt-2" :loading="BtnLoginLoading">Sign in</v-btn>
 
             </v-form>
             <div class="mt-2">
@@ -30,6 +30,8 @@ export default {
         useremailTxtField: null,
         passwordTxtField: null
       },
+
+      BtnLoginLoading: false,
        
         // loginBtn: false,
 
@@ -42,6 +44,8 @@ export default {
   methods: {
 
     login() {
+
+
 
       if(!this.munthu.useremailTxtField || !this.munthu.passwordTxtField){
 
@@ -58,23 +62,18 @@ export default {
         })
         .then((response) => {
           if (response.status === 201) {
-            // this.BtnAddCorrespondenceLoading = false;
-            // this.addcorrespondencedialog = false;
-            // this.getCorrespondencesFromApi();
+            // this.BtnLoginLoading = true;
             // this.$refs.form.reset();
             const token = response.data.token;
+            const tuser = response.data.user;  
+
             sessionStorage.setItem('api_token', token);
-            alert(token);
+            sessionStorage.setItem('userdetails', JSON.stringify(tuser)); // converting object so that it can be stored in session storage
 
+            // sessionStorage.setItem('userdetailssession', tuser);
 
-
-            // sessionStorage.setItem("Username",response.user.name);
-            // sessionStorage.setItem("Authorization", response.token.Value);
-            // $vi = sessionStorage.getItem("Authorization");
-            // alert("Welcome" + $vi);
-
-
-
+            // alert(token);
+            
             this.$router.push({path: '/'});
           } 
           else {
@@ -84,6 +83,7 @@ export default {
 
       }
 
+      this.BtnLoginLoading = false;
      
         
     }

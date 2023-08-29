@@ -40,7 +40,7 @@
       </v-row>
 
 
-      <!-- START ADD FILE MODAL --> 
+      <!-- START ADD DOCUMENT MODAL --> 
 
       <v-dialog v-model="adddocumentdialog" max-width="500">
         <v-card>
@@ -83,7 +83,7 @@
 
 
 
-      <!-- START UPDATE FILE MODAL -->
+      <!-- START UPDATE DOCUMENT MODAL -->
       <v-dialog v-model="updatefiledialog" max-width="500">
         <v-card>
           <v-card-title>
@@ -117,9 +117,9 @@
         </v-card>
       </v-dialog>
 
-      <!-- END UPDATE FILE MODAL -->
+      <!-- END UPDATE DOCUMENT MODAL -->
 
-      <!-- START DELETE FILE MODAL -->
+      <!-- START DELETE DOCUMENT MODAL -->
       <v-dialog v-model="deletedocumentdialog" max-width="400">
         <v-card>
           <v-card-title class="text-center">
@@ -141,7 +141,7 @@
         </v-card>
       </v-dialog>
 
-      <!-- END DELETE FILE MODAL -->
+      <!-- END DELETE DOCUMENT MODAL -->
 
 
       <!-- START DOCUMENT PREVIEW MODAL -->

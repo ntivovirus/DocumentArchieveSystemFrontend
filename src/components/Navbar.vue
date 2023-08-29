@@ -9,9 +9,9 @@
         <span>Management System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text color="grey" rounded>
-        <span>Sign Out</span>
-        <v-icon right>mdi-exit-to-app</v-icon>
+      <v-btn text color="grey" outlined rounded @click="logoutmethod()">
+        <span class=" font-weight-bold text-lowercase blue--text">{{this.username}}</span> <span> || Sign Out</span>
+        <v-icon color="warning" right>mdi-exit-to-app</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -73,10 +73,12 @@ export default {
     return {
     drawerSteve : true,
 
+    username : null,
+
     //selectedItem: 1,
     links : [
       {text: 'Dashboard', icon: 'mdi-view-dashboard',  route:'/'},
-      {text: 'Correspondences', icon: 'mdi-group', route: '/correspondence'},
+      {text: 'Correspondences', icon: 'mdi-group', route: '/correspondence'}, 
       {text: 'Files', icon: 'mdi-folder-multiple', route: '/file'},
       {text: 'Documents', icon: 'mdi-file', route: '/document'},
       {text: 'Users', icon: 'mdi-account-group', route: '/user'},
@@ -89,29 +91,40 @@ export default {
   },
   methods: {
 
-    checksessionman(){
+    getuserDetailsMethod(){
+      // this.username = sessionStorage.getItem("userdetails"); // WORKING LINK
 
-       zokonda = this.sessionStorage.getItem('api_token')
+              // Retrieve the JSON string from Session Storage
+        const storedUser = sessionStorage.getItem("userdetails");
 
-      if(zokonda){
-        alert(zokonda);
-      }
-      else{
-        this.$router.push({path: '/login'}); 
+        // Parse the JSON string back to an object
+        const user = storedUser ? JSON.parse(storedUser) : null;
 
-      }
+        // Access the 'username' property
+        this.username = user ? user.email : null; 
+         
+
+        // console.log(username); // Output: 'john_doe'
+
 
       
-    
 
+
+    },
+
+    logoutmethod(){
+      // sessionStorage.removeItem('api_token'); // removing single session storage
+      sessionStorage.clear(); // removing all session storage
+
+      this.$router.push({path: 'login'});
 
     }
-   
+
 
   },
   mounted () {
 
-    this.checksessionman();
+    this.getuserDetailsMethod(); 
 
   }
 }

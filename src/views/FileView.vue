@@ -58,8 +58,8 @@
               <v-textarea label="File Description" v-model="fileDescriptionTxtField"
                 prepend-icon="mdi-file-question" :counter="4" :rules="nameRules"
                 required></v-textarea>
-              <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
-                data-vv-name="select" prepend-icon="mdi-group" ></v-select>
+                <v-autocomplete v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
+              placeholder="select..." prepend-icon="mdi-group" :rules="nameRules" required></v-autocomplete>
               <v-select v-model="selectStatus" :items="filestatuses" label="File Status" data-vv-name="select"
                 prepend-icon="mdi-file-settings" ></v-select>
 
@@ -97,8 +97,9 @@
                 required></v-text-field>
               <v-textarea label="File Description" v-model="file.FILE_DESCRIPTION" prepend-icon="mdi-group" :counter="4" :rules="nameRules"
                 required></v-textarea>
-              <v-select v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
-                data-vv-name="select" prepend-icon="mdi-group" required></v-select>
+
+                <v-autocomplete v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
+              placeholder="select..." prepend-icon="mdi-group" :rules="nameRules" required></v-autocomplete>
               <v-select v-model="file.STATUS" :items="filestatuses" label="File Status" data-vv-name="select"
                 prepend-icon="mdi-group" required></v-select>
             </v-form>
@@ -155,6 +156,7 @@
           </v-card-title>
           <v-card-text>
           <v-form class="px-3" ref="addDocForm"  enctype="multipart/form-data" v-model="valid" lazy-validation>
+              <v-text-field disabled label="Correspondence" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
                 prepend-icon="mdi-group"></v-text-field>
@@ -203,6 +205,8 @@ export default {
 
   data() {
     return {
+
+      userID : null,
 
      
 
@@ -483,8 +487,11 @@ axios
       .post("http://127.0.0.1:8000/api/AddDocumentRoute", {
           FileHolder: this.file.FILE_NAME,
           DocumentNameHolder: this.documentNameInFileTextField,
+          actorHolder: this.userID,
           FolioNumberHolder: this.documentFolioNumberInFileTextField,
           DocPathHolder: this.pinDocumentInFileTextField
+
+          
 
         })
         .then((response) => {
@@ -542,6 +549,7 @@ submitForm() {
   const formData = new FormData();
   formData.append('FileHolder', this.file.FILE_NAME);
   formData.append('DocumentNameHolder', this.documentNameInFileTextField);
+  formData.append('actorHolder', this.userID );
   formData.append('FolioNumberHolder', this.documentFolioNumberInFileTextField);
   formData.append('DocPathHolder', fileinput);
 
@@ -565,11 +573,41 @@ submitForm() {
           // console.error(error);
       });
 
-}
+},
 
 
 // END START RECENT BLOCK
 
+
+getuserDetailsMethod(){
+      // this.username = sessionStorage.getItem("userdetails"); // WORKING LINK
+
+              // Retrieve the JSON string from Session Storage
+        const storedUser = sessionStorage.getItem("userdetails");
+
+        // Parse the JSON string back to an object
+        const user = storedUser ? JSON.parse(storedUser) : null;
+
+        ////////////////////
+        /////////////////
+
+        let stringValue = user ? user.id : null; // Example string containing a number
+        let intValue = parseInt(stringValue); // Convert string to integer
+
+        console.log(intValue); // Output: 42
+
+        ////////////////////
+        /////////////////
+
+        // Access the 'username' property
+        this.userID =  intValue;
+
+        alert(this.userID);
+         
+
+        // console.log(username); // Output: 'john_doe'
+
+    },
 
 
 
@@ -586,6 +624,7 @@ submitForm() {
   mounted() {
     this.getFilesFromApi();
     this.selectcorrespondencemethod();
+    this.getuserDetailsMethod();
     // filterNonNumeric();
   },
 };
