@@ -26,7 +26,7 @@
               :search="search" :loading="documentdataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon color="red" small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
                   <v-icon small class="mr-5" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
                   <v-icon small class="mr-5" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
@@ -251,8 +251,8 @@ export default {
         { text: "CORRESPONDENCE", value: "file.correspondence.CORRESPONDENCE_NAME" },
         { text: "FILE", value: "file.FILE_NAME" },
         { text: "FILE STATUS", value: "file.STATUS" },
-        { text: "ADDED BY", value: "FOLIO_NUMBER" },
-        { text: "CREATED AT", value: "created_at" },
+        { text: "ADDED BY", value: "user.name" },
+        { text: "CREATED AT", value: "created_at"},
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
       ],

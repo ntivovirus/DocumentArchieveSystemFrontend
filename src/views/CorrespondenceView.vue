@@ -37,8 +37,9 @@
                 loading-text="Loading... Please wait"
               >
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-5" @click="FetchCorrespondenceDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon small @click="FetchDeleteCorrespondenceDetails(item.id)"> mdi-delete </v-icon>
+                  <!-- <v-icon small class="mr-5" @click="FetchCorrespondenceDetails(item.id)"> mdi-pencil </v-icon> -->
+                  <v-icon small class="mr-5" @click="FetchCorrespondenceDetails(item.id)"> mdi-pencil</v-icon>
+                  <v-icon color="red" small @click="FetchDeleteCorrespondenceDetails(item.id)"> mdi-delete </v-icon>
                 </template>
               </v-data-table>
             </v-card-text>

@@ -26,8 +26,8 @@
               :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
-                  <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
+                  <v-icon color="red" small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-file-plus </v-icon>
 
                 </template>
               </v-data-table>
@@ -594,18 +594,13 @@ getuserDetailsMethod(){
         let stringValue = user ? user.id : null; // Example string containing a number
         let intValue = parseInt(stringValue); // Convert string to integer
 
-        console.log(intValue); // Output: 42
-
         ////////////////////
         /////////////////
 
         // Access the 'username' property
         this.userID =  intValue;
 
-        alert(this.userID);
-         
-
-        // console.log(username); // Output: 'john_doe'
+        // alert(this.userID);
 
     },
 
