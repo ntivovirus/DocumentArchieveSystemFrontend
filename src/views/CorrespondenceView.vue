@@ -225,6 +225,12 @@ export default {
   data() {
     return {
 
+      // SWEETALERTS 
+      apimessage: null,
+      apistatus: null,
+      apititle: null,
+
+      // END SWEETALERTS 
       
       //ADD NEW CORRESPONDENCE DATA
       correspondenceNameTxtField: "",
@@ -308,7 +314,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             this.correspondences = response.data; 
-      this.correspondencedataloading=false;
+            this.correspondencedataloading=false;
 
           } else {
             alert("Error Loading Correspondences data");
@@ -329,13 +335,18 @@ export default {
           CorrespondenceDescriptionHolder: this.correspondenceDescriptionTxtField
         })
         .then((response) => {
+          this.SwtAlertResponse(response.data);
+
           if (response.status === 200) {
             this.BtnAddCorrespondenceLoading = false;
             this.addcorrespondencedialog = false;
             this.getCorrespondencesFromApi();
             this.$refs.form.reset();
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           } else {
-            alert("Error adding section");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         });
     },
@@ -383,10 +394,13 @@ export default {
             CorrespondenceDescriptionHolder: this.correspondence.CORRESPONDENCE_DESCRIPTION
           })
           .then((response) => {
+            this.SwtAlertResponse(response.data);
             if (response.status ===200) {
               this.getCorrespondencesFromApi();
               this.updatecorrespondencedialog = false;
               this.BtnUpdateCorrespondenceLoading = false;
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
 
             }
           })
@@ -400,12 +414,26 @@ export default {
            
           })
           .then((response) => {
+            this.SwtAlertResponse(response.data);
             if (response.status ===200) {
               this.getCorrespondencesFromApi();
               this.deletecorrespondencedialog = false;
               this.BtnDeleteCorrespondenceLoading = false;
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+            }
+            else{
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
             }
           })
+    },
+
+
+    SwtAlertResponse($ntivo){
+          this.apimessage = $ntivo.message;
+          this.apistatus = $ntivo.status;
+          this.apititle = $ntivo.status;
     }
   },
 

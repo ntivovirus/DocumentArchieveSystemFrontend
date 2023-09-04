@@ -9,16 +9,36 @@
         <span>Management System</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text color="grey" outlined rounded @click="logoutmethod()">
-        <span class=" font-weight-bold text-lowercase blue--text">{{this.username}}</span> <span> || Sign Out</span>
+      <div class="mr-2">
+      <v-badge
+      bordered
+        color="green"
+        icon="mdi-account"
+        overlap
+      >
+      <div> <span class=" font-weight-bold text-lowercase blue--text mr-4 text-caption">{{this.username}}</span></div>
+    </v-badge>
+  </div>
+    <v-divider
+      class="mx-2"
+      vertical
+    ></v-divider>
+    
+      <v-btn text color="grey" outlined rounded small  @click="logoutmethod()">
+        <v-divider
+      class="mx-2"
+      vertical
+    ></v-divider><span>  Log~Out</span>
         <v-icon color="warning" right>mdi-exit-to-app</v-icon>
       </v-btn>
+    
     </v-app-bar>
 
     <v-navigation-drawer app class="indigo" v-model="drawerSteve">
       <div class="d-flex mt-4 mb-5 justify-center" >
           <v-avatar size="150">
-            <img src="/Malawi-Gov.png" alt="Blantyre District Council Emblem"> 
+            <img
+            src="/Malawi-Gov.png" alt="Blantyre District Council Emblem"> 
           </v-avatar>
           <!-- <pm class=" subheading grey--text">Blantyre District Council</pm> --> 
       </div>

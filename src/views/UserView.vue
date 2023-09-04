@@ -227,6 +227,16 @@ export default {
 
   data() {
     return {
+
+      // SWEETALERTS 
+      apimessage: null,
+      apistatus: null,
+      apititle: null,
+
+      // END SWEETALERTS 
+
+
+
       //ADD NEW CORRESPONDENCE DATA
       userFullNameTxtField: "",
       userEmailTxtField: "",
@@ -311,12 +321,15 @@ export default {
       axios
         .get("http://127.0.0.1:8000/api/ListUserRoute")
         .then((response) => {
+          
           if (response.status === 200) {
             this.users = response.data;
       this.userdataloading=false;
 
           } else {
-            alert("Error Loading Users data");
+            // alert("Error Loading Users data");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         });
     },
@@ -335,13 +348,19 @@ export default {
           UserRoleHolder: this.userRoleSelectField
         })
         .then((response) => {
+          this.SwtAlertResponse(response.data);
+
           if (response.status === 200) {
             this.BtnAddUserLoading = false;
             this.adduserdialog = false;
             this.getUsersFromApi();
             this.$refs.form.reset();
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           } else {
-            alert("Error adding User");
+            // alert("Error adding User");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         });
     },
@@ -389,10 +408,12 @@ export default {
             UserRoleHolder: this.user.role
           })
           .then((response) => {
+            this.SwtAlertResponse(response.data);
             if (response.status ===200) {
               this.getUsersFromApi();
               this.updateuserdialog = false;
               this.BtnUpdateUserLoading = false;
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
 
             }
           })
@@ -406,12 +427,21 @@ export default {
            
           })
           .then((response) => {
+            this.SwtAlertResponse(response.data);
             if (response.status ===200) {
               this.getUsersFromApi();
               this.deleteuserdialog = false;
               this.BtnDeleteUserLoading = false;
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
             }
           })
+    },
+
+    SwtAlertResponse($ntivo){
+          this.apimessage = $ntivo.message;
+          this.apistatus = $ntivo.status;
+          this.apititle = $ntivo.status;
     }
   },
 

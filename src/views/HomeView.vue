@@ -6,6 +6,7 @@
               <v-card
                         class="mx-auto"
                         max-width="400"
+                        :loading="usercountLoading"
                       >
                         <v-list-item two-line>
                           <v-list-item-content>
@@ -46,6 +47,7 @@
                 <v-card
                         class="mx-auto"
                         max-width="400"
+                        :loading="documentcountLoading"
                       >
                         <v-list-item two-line>
                           <v-list-item-content>
@@ -87,6 +89,7 @@
                 <v-card
                         class="mx-auto"
                         max-width="400"
+                        :loading="filecountLoading"
                       >
                         <v-list-item two-line>
                           <v-list-item-content>
@@ -128,6 +131,7 @@
                 <v-card
                         class="mx-auto"
                         max-width="400"
+                        :loading="correspondencecountLoading"
                       >
                         <v-list-item two-line>
                           <v-list-item-content>
@@ -172,25 +176,35 @@
 <script>
 import axios from "axios";
   export default {
-  name: "correspondence", // name of component view
+  name: "home", // name of component view
 
   data() {
     return {
       usercount: null,
+      usercountLoading: false,
+
       correspondencecount: null,
+      correspondencecountLoading: false,
+
       filecount: null,
+      filecountLoading: false,
+
       documentcount: null,
+      documentcountLoading: false,
 
     }
   },
   methods: {
 
     countUsersMethod() {
+      this.usercountLoading= true;
       axios
         .get("http://127.0.0.1:8000/api/countUsersRoute")
         .then((response) => {
           if (response.status === 200) {
             this.usercount = response.data; 
+           this.usercountLoading= false;
+
 
           } else {
             alert("Error Loading data");
@@ -200,11 +214,14 @@ import axios from "axios";
     },
 
     countDocumentsMethod() {
+      this.documentcountLoading= true;
       axios
         .get("http://127.0.0.1:8000/api/countDocumentsRoute")
         .then((response) => {
           if (response.status === 200) {
             this.documentcount = response.data; 
+            this.documentcountLoading= false;
+
 
           } else {
             alert("Error Loading data");
@@ -214,11 +231,14 @@ import axios from "axios";
     },
 
     countFilesMethod() {
+      this.filecountLoading= true;
       axios
         .get("http://127.0.0.1:8000/api/countFilesRoute")
         .then((response) => {
           if (response.status === 200) {
             this.filecount = response.data; 
+            this.filecountLoading= false;
+
 
           } else {
             alert("Error Loading data");
@@ -228,11 +248,14 @@ import axios from "axios";
     },
 
     countCorrespondencesMethod() {
+      this.correspondencecountLoading= true;
       axios
         .get("http://127.0.0.1:8000/api/countCorrespondencesRoute")
         .then((response) => {
           if (response.status === 200) {
             this.correspondencecount = response.data; 
+            this.correspondencecountLoading= false;
+
 
           } else {
             alert("Error Loading data");

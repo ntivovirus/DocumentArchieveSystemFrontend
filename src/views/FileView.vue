@@ -205,8 +205,16 @@ export default {
 
   data() {
     return {
+      
 
       userID : null,
+
+      // SWEETALERTS 
+      apimessage: null,
+      apistatus: null,
+      apititle: null,
+
+      // END SWEETALERTS 
 
      
 
@@ -357,14 +365,19 @@ numberRules: [
 
         })
         .then((response) => {
-          console.log(response);
+          this.SwtAlertResponse(response.data);
+
+          // console.log(response);
           if (response.status === 200) {
             this.BtnAddFileLoading = false;
             this.addfiledialog = false;
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
             this.getFilesFromApi();
             this.$refs.form.reset();
+
           } else {
-            alert("Error adding file");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         });
     },
@@ -380,7 +393,6 @@ numberRules: [
             this.selectCorrespondence = response.data.updateFileCorrespondanceNameSelect
             // alert(selectStatus);
             this.updatefiledialog = true;
-
           }
         })
 
@@ -431,14 +443,19 @@ axios
 
           })
           .then((response) => {
-            console.log(response);
+            this.SwtAlertResponse(response.data);
+
             if (response.status === 200) {
               this.BtnUpdateFileLoading = false;
               this.updatefiledialog = false;
               this.getFilesFromApi();
               this.$refs.form.reset();
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+
             } else {
-              alert("Error updating file");
+              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
             }
           })
     },
@@ -451,10 +468,18 @@ axios
 
         })
         .then((response) => {
+          this.SwtAlertResponse(response.data);
+
           if (response.status === 200) {
             this.getFilesFromApi();
             this.deletefiledialog = false;
             this.BtnDeleteFileLoading = false;
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+          }
+          else{
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         })
     },
@@ -465,7 +490,7 @@ axios
         .then((response) => {
           if (response.status === 200) {
             var correspondences = response.data
-            console.log('steve' + correspondences);
+            // console.log('steve' + correspondences);
             correspondences.forEach(correspondence => {
               this.correspondences.push(correspondence.CORRESPONDENCE_NAME);
               // $zako = this.correspondences.push(correspondence.id); 
@@ -490,19 +515,20 @@ axios
           actorHolder: this.userID,
           FolioNumberHolder: this.documentFolioNumberInFileTextField,
           DocPathHolder: this.pinDocumentInFileTextField
-
-          
-
         })
         .then((response) => {
-          console.log(response);
+          this.SwtAlertResponse(response.data);
+
           if (response.status === 200) {
             this.BtnAddDocumentLoading = false;
             this.adddocumentdialog;
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
             this.getFilesFromApi();
             this.$refs.form.reset();
           } else {
-            alert("Error adding document");
+            // alert("Error adding document");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         });
     },
@@ -561,9 +587,12 @@ submitForm() {
     }
   })
     .then(response=>{
-      console.log(response.data.message);
+      this.SwtAlertResponse(response.data);
+
       this.BtnAddDocumentLoading = false;
       this.adddocumentdialog = false;
+      this.$swal(this.apititle,this.apimessage,this.apistatus);
+
       this.getFilesFromApi();
       this.$refs.addDocForm.reset();
 
@@ -604,8 +633,11 @@ getuserDetailsMethod(){
 
     },
 
-
-
+    SwtAlertResponse($ntivo){
+          this.apimessage = $ntivo.message;
+          this.apistatus = $ntivo.status;
+          this.apititle = $ntivo.status;
+    }
 
 
   ////////////////////////////////////////////////////////////////////////////

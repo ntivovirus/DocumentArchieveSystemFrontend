@@ -167,6 +167,13 @@ export default {
 
       documentdataloading: false,
 
+       // SWEETALERTS 
+       apimessage: null,
+      apistatus: null,
+      apititle: null,
+
+      // END SWEETALERTS 
+
 
       //DOCUMENT PREVIEW
       previewdocumentdialog: false,
@@ -430,10 +437,18 @@ axios
 
         })
         .then((response) => {
+          this.SwtAlertResponse(response.data);
+
           if (response.status === 200) {
             this.getDocumentsFromApi();
             this.deletedocumentdialog = false;
             this.BtnDeleteDocumentLoading = false;
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+          }
+          else{
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
           }
         })
     },
@@ -477,7 +492,14 @@ axios
           }
         }
         )
+    },
+
+    SwtAlertResponse($ntivo){
+          this.apimessage = $ntivo.message;
+          this.apistatus = $ntivo.status;
+          this.apititle = $ntivo.status;
     }
+
 
 
 
