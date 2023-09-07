@@ -579,6 +579,14 @@ submitForm() {
   formData.append('FolioNumberHolder', this.documentFolioNumberInFileTextField);
   formData.append('DocPathHolder', fileinput);
 
+  if(!formData.append('DocPathHolder', fileinput)===''){
+    this.$swal('Error','Please fill in all fields','error');
+  this.BtnAddDocumentLoading = false;
+
+
+  }
+  else{
+
   // alert(fileinput);
 
   axios.post('http://127.0.0.1:8000/api/AddDocumentRoute', formData, {
@@ -601,6 +609,7 @@ submitForm() {
       .catch(error => {
           // console.error(error);
       });
+    }
 
 },
 

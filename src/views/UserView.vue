@@ -90,6 +90,9 @@
               <v-select v-model="userRoleSelectField" :items="selectUserRole" label="User Role"
                 data-vv-name="select" prepend-icon="mdi-account-group" :rules="nameRules"
                 required></v-select>
+                <v-select v-model="userStatusSelectField" :items="selectUserStatus" label="Account Status" prepend-icon="mdi-account-question" 
+               :rules="nameRules" required>
+              </v-select>
               
             </v-form>
           </v-card-text>
@@ -154,6 +157,12 @@
                v-model="user.role" 
                :items="selectUserRole"
                prepend-icon="mdi-account-group" 
+               :rules="nameRules">
+              </v-select>
+              <v-select 
+               v-model="user.account_status" 
+               :items="selectUserStatus"
+               prepend-icon="mdi-account-question" 
                :rules="nameRules">
               </v-select>
             </v-form>
@@ -242,7 +251,9 @@ export default {
       userEmailTxtField: "",
       userPasswordTxtField: "",
       userRoleSelectField:"",
+      userStatusSelectField:"",
       selectUserRole:["Administrator","User"],
+      selectUserStatus:["ACTIVE","DEACTIVATED"],
       adduserdialog: false,
       BtnAddUserLoading: false,
       search: "",
@@ -260,7 +271,9 @@ export default {
       user: {
         name:null, 
         email:null, 
-        role:null
+        role:null,
+        account_status:null
+
       },
 
       //END UPDATE USER DATA
@@ -287,6 +300,7 @@ export default {
         { text: "USER FULL NAME", value: "name" },
         { text: "EMAIL", value: "email" },
         { text: "ROLE", value: "role" },
+        { text: "STATUS", value: "account_status" },
         { text: "CREATED AT", value: "created_at" },
         { text: "UPDATED AT", value: "updated_at" },
         { text: "ACTION", sortable: false, value: "actions" },
@@ -345,7 +359,8 @@ export default {
           UserfullnameHolder: this.userFullNameTxtField,
           UserEmailHolder: this.userEmailTxtField,
           UserPasswordHolder: this.userPasswordTxtField,
-          UserRoleHolder: this.userRoleSelectField
+          UserRoleHolder: this.userRoleSelectField,
+          UserStatusHolder: this.userStatusSelectField
         })
         .then((response) => {
           this.SwtAlertResponse(response.data);
@@ -405,7 +420,9 @@ export default {
           .put(`http://127.0.0.1:8000/api/updateUserRoute/${this.userID}`, {
             UserFullNameHolder: this.user.name,
             UserEmailHolder: this.user.email,
-            UserRoleHolder: this.user.role
+            UserRoleHolder: this.user.role,
+            UserStatusHolder: this.user.account_status
+
           })
           .then((response) => {
             this.SwtAlertResponse(response.data);

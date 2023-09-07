@@ -113,7 +113,7 @@ export default {
             this.BtnLoginLoading=false;
             this.$swal(
               'Warning (Message Of The Day)',
-              'All connections are monitored and recorded. Disconnect/LogOut IMMEDIATELY if you are not an authorized user!',
+              'All connections are monitored and recorded. Disconnect/LogOut IMMEDIATELY if you are NOT an authorized user!',
               'warning'
               );
 
