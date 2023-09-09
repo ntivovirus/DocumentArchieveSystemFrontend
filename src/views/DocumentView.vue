@@ -7,9 +7,11 @@
             <v-card-title>
               <h4>DOCUMENTS</h4>
               <v-spacer></v-spacer>
+              <!-- <v-btn slot="activator" v-bind:disabled="newDocumentDisabled" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog"> -->
               <v-btn slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog">
+
                 <v-icon>mdi-plus</v-icon>
-                <span class="text-capitalize">New Document</span>
+                <span class="text-capitalize">New Document</span> 
               </v-btn>
             </v-card-title>
             <v-card-text>
@@ -26,11 +28,11 @@
               :search="search" :loading="documentdataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon color="red" small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon>
+                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
+                  <!-- <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon> -->
                   <v-icon small class="mr-5" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
                   <v-icon small class="mr-5" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
-                  <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon>
+                  <!-- <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon> -->
 
                 </template>
               </v-data-table>
@@ -46,7 +48,7 @@
         <v-card>
           <v-card-title>
             <h3>Add New Document</h3>
-            <v-spacer></v-spacer>
+            <v-spacer></v-spacer> 
 
             <v-btn text color="grey" rounded @click="adddocumentdialog = !adddocumentdialog">
               <span>Close</span>
@@ -164,6 +166,14 @@ export default {
 
   data() {
     return {
+
+      // USER ROLE CONTROLLER
+      newDocumentDisabled: false,
+
+      editShowIcon: null,
+      deleteShowIcon: null,
+
+      // END USER ROLE CONTROLLER
 
       documentdataloading: false,
 
@@ -498,6 +508,27 @@ axios
           this.apimessage = $ntivo.message;
           this.apistatus = $ntivo.status;
           this.apititle = $ntivo.status;
+    },
+
+ 
+    userRolemethodDeterminer(){
+      const user = JSON.parse(sessionStorage.getItem("userdetails")) 
+      this.user_role = user.role;
+
+      if (this.user_role === 'User'){
+          this.editShowIcon = false;
+          this.deleteShowIcon = false;
+
+        } 
+        else{
+          this.AddFileShowBtn = true;
+          this.editShowIcon = true;
+          this.deleteShowIcon = true;
+
+
+        }
+
+
     }
 
 
@@ -509,6 +540,8 @@ axios
     this.getDocumentsFromApi();
     this.selectcorrespondencemethod();
     this.selectfilemethod();
+    this.userRolemethodDeterminer();
+    
   },
 };
 </script>

@@ -396,10 +396,12 @@ export default {
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              this.getCorrespondencesFromApi();
-              this.updatecorrespondencedialog = false;
               this.BtnUpdateCorrespondenceLoading = false;
-              this.$swal(this.apititle,this.apimessage,this.apistatus);
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+                this.updatecorrespondencedialog = false;
+              
+                this.getCorrespondencesFromApi();
+              })
 
 
             }

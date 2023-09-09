@@ -180,16 +180,16 @@ import axios from "axios";
 
   data() {
     return {
-      usercount: null,
+      usercount: 0,
       usercountLoading: false,
 
-      correspondencecount: null,
+      correspondencecount: 0,
       correspondencecountLoading: false,
 
-      filecount: null,
+      filecount: 0,
       filecountLoading: false,
 
-      documentcount: null,
+      documentcount: 0,
       documentcountLoading: false,
 
     }

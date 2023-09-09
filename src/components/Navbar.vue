@@ -24,11 +24,11 @@
       vertical
     ></v-divider>
     
-      <v-btn text color="grey" outlined rounded small  @click="logoutmethod()">
+      <v-btn text color="grey" rounded small  @click="logoutmethod()">
         <v-divider
       class="mx-2"
       vertical
-    ></v-divider><span>  Log~Out</span>
+    ></v-divider><span>Sign Out</span>
         <v-icon color="warning" right>mdi-exit-to-app</v-icon>
       </v-btn>
     
@@ -43,8 +43,8 @@
           <!-- <pm class=" subheading grey--text">Blantyre District Council</pm> --> 
       </div>
     <!-- new menu list-->
-        <v-list nav shaped>
-          <v-list-item class="white--text text--lighten-4 font-weight-black" v-for="link in links" :key="link.text" router :to="link.route" >
+        <v-list v-if="user_role==='Administrator'" nav shaped>
+          <v-list-item class="white--text text--lighten-4 font-weight-black" v-for="link in admin" :key="link.text" router :to="link.route" >
             <v-list-item-icon>
               <v-icon >{{ link.icon }}</v-icon>
             </v-list-item-icon>
@@ -55,6 +55,18 @@
         <!-- </v-list-item-group> -->
       </v-list>
       <!-- end new menu list -->
+
+      <v-list v-if="user_role==='User'" nav shaped>
+          <v-list-item class="white--text text--lighten-4 font-weight-black" v-for="link in user" :key="link.text" router :to="link.route" >
+            <v-list-item-icon>
+              <v-icon >{{ link.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title >{{ link.text }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        <!-- </v-list-item-group> -->
+      </v-list>
 
       <!-- OLD WAY 1 -->
       <!-- <v-list >
@@ -91,17 +103,26 @@
 export default {
   data () {
     return {
+    user_role: null,
     drawerSteve : true,
 
     username : null,
 
     //selectedItem: 1,
-    links : [
+    admin : [
       {text: 'Dashboard', icon: 'mdi-view-dashboard',  route:'/'},
       {text: 'Correspondences', icon: 'mdi-group', route: '/correspondence'}, 
       {text: 'Files', icon: 'mdi-folder-multiple', route: '/file'},
       {text: 'Documents', icon: 'mdi-file', route: '/document'},
       {text: 'Users', icon: 'mdi-account-group', route: '/user'},
+      {text: 'User Settings', icon: 'mdi-account-settings', route: '/usersetting'},
+    ],
+
+    user : [
+      {text: 'Dashboard', icon: 'mdi-view-dashboard',  route:'/'},
+      // {text: 'Correspondences', icon: 'mdi-group', route: '/correspondence'}, 
+      {text: 'Files', icon: 'mdi-folder-multiple', route: '/file'},
+      {text: 'Documents', icon: 'mdi-file', route: '/document'},
       {text: 'User Settings', icon: 'mdi-account-settings', route: '/usersetting'},
     ]
 
@@ -114,21 +135,15 @@ export default {
     getuserDetailsMethod(){
       // this.username = sessionStorage.getItem("userdetails"); // WORKING LINK
 
-              // Retrieve the JSON string from Session Storage
-        const storedUser = sessionStorage.getItem("userdetails");
+        const storedUser = sessionStorage.getItem("userdetails");  // Retrieve the JSON string from Session Storage
 
-        // Parse the JSON string back to an object
-        const user = storedUser ? JSON.parse(storedUser) : null;
+        
+        const user = storedUser ? JSON.parse(storedUser) : null; // Parse the JSON string back to an object
 
         // Access the 'username' property
         this.username = user ? user.email : null; 
-         
 
         // console.log(username); // Output: 'john_doe'
-
-
-      
-
 
     },
 
@@ -138,14 +153,20 @@ export default {
 
       this.$router.push({path: 'login'});
 
-    }
+    },
+
+    userRolemethod(){
+      const user = JSON.parse(sessionStorage.getItem("userdetails")) 
+      this.user_role = user.role;
+
+    },
 
 
   },
   mounted () {
-
-    this.getuserDetailsMethod(); 
-
+    this.getuserDetailsMethod();
+    this.userRolemethod();
+    
   }
 }
 

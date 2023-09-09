@@ -7,7 +7,9 @@
             <v-card-title> 
               <h4>FILES</h4>
               <v-spacer></v-spacer>
-              <v-btn slot="activator" depressed class="primary" @click="addfiledialog = !addfiledialog">
+              <!-- <v-btn slot="activator" v-bind:disabled="newFileDisabled" depressed class="primary" @click="addfiledialog = !addfiledialog">--> <!--TO REMIND ON HOW TO BIND THE BTN WITH DISABLE PROP -->
+              <v-btn slot="activator" v-show="AddFileShowBtn"  depressed class="primary" @click="addfiledialog = !addfiledialog">
+
                 <v-icon>mdi-plus</v-icon>
                 <span class="text-capitalize">New File</span>
               </v-btn>
@@ -25,8 +27,8 @@
               class="elevation-1"
               :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon color="red" small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon v-show="editShowIcon" small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-file-plus </v-icon>
 
                 </template>
@@ -205,7 +207,16 @@ export default {
 
   data() {
     return {
+
+      // USER ROLE CONTROLLER
+
+      editShowIcon: null,
+      deleteShowIcon: null,
+      AddFileShowBtn: null,
+
       
+      // END USER ROLE CONTROLLER
+
 
       userID : null,
 
@@ -646,6 +657,27 @@ getuserDetailsMethod(){
           this.apimessage = $ntivo.message;
           this.apistatus = $ntivo.status;
           this.apititle = $ntivo.status;
+    },
+
+    userRolemethodDeterminer(){
+      const user = JSON.parse(sessionStorage.getItem("userdetails")) 
+      this.user_role = user.role;
+
+      if (this.user_role === 'User'){
+          this.AddFileShowBtn = false;
+          this.editShowIcon = false;
+          this.deleteShowIcon = false;
+
+        } 
+        else{
+          this.AddFileShowBtn = true;
+          this.editShowIcon = true;
+          this.deleteShowIcon = true;
+
+
+        }
+
+
     }
 
 
@@ -661,6 +693,7 @@ getuserDetailsMethod(){
     this.getFilesFromApi();
     this.selectcorrespondencemethod();
     this.getuserDetailsMethod();
+    this.userRolemethodDeterminer();
     // filterNonNumeric();
   },
 };
