@@ -367,10 +367,12 @@ export default {
 
           if (response.status === 200) {
             this.BtnAddUserLoading = false;
-            this.adduserdialog = false;
-            this.getUsersFromApi();
             this.$refs.form.reset();
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+              this.adduserdialog = false;
+              this.getUsersFromApi();
+            });
 
           } else {
             // alert("Error adding User");
@@ -427,10 +429,12 @@ export default {
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              this.getUsersFromApi();
-              this.updateuserdialog = false;
               this.BtnUpdateUserLoading = false;
-              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+                this.updateuserdialog = false;
+                this.getUsersFromApi();
+              });
 
             }
           })
@@ -446,10 +450,12 @@ export default {
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              this.getUsersFromApi();
-              this.deleteuserdialog = false;
               this.BtnDeleteUserLoading = false;
-              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+                this.deleteuserdialog = false;
+                this.getUsersFromApi();
+              });
 
             }
           })

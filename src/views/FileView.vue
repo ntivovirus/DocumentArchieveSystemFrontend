@@ -27,8 +27,8 @@
               class="elevation-1"
               :search="search" :loading="filedataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
-                  <v-icon v-show="editShowIcon" small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-5" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
+                  <v-icon v-show="editShowIcon" small class="mr-2" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-2" @click="FetchDeleteFileDetails(item.id)"> mdi-delete </v-icon>
                   <v-icon small @click="FetchDocumentFileDetails(item.id)"> mdi-file-plus </v-icon>
 
                 </template>
@@ -381,10 +381,12 @@ numberRules: [
           // console.log(response);
           if (response.status === 200) {
             this.BtnAddFileLoading = false;
+            this.$refs.AddFileForm.reset();
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
             this.addfiledialog = false;
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
             this.getFilesFromApi();
-            this.$refs.form.reset();
+            });
 
           } else {
             this.$swal(this.apititle,this.apimessage,this.apistatus);
@@ -458,10 +460,14 @@ axios
 
             if (response.status === 200) {
               this.BtnUpdateFileLoading = false;
-              this.updatefiledialog = false;
+              this.$refs.updateform.reset();
+
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+                this.updatefiledialog = false;
               this.getFilesFromApi();
-              this.$refs.form.reset();
-              this.$swal(this.apititle,this.apimessage,this.apistatus);
+              })
+
+
 
 
             } else {
@@ -482,10 +488,12 @@ axios
           this.SwtAlertResponse(response.data);
 
           if (response.status === 200) {
-            this.getFilesFromApi();
-            this.deletefiledialog = false;
             this.BtnDeleteFileLoading = false;
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+            this.deletefiledialog = false;
+            this.getFilesFromApi();
+            });
 
           }
           else{
@@ -532,10 +540,13 @@ axios
 
           if (response.status === 200) {
             this.BtnAddDocumentLoading = false;
-            this.adddocumentdialog;
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
-            this.getFilesFromApi();
             this.$refs.form.reset();
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+            this.adddocumentdialog= false;
+            this.getFilesFromApi();
+            });
+
           } else {
             // alert("Error adding document");
             this.$swal(this.apititle,this.apimessage,this.apistatus);
@@ -607,13 +618,14 @@ submitForm() {
   })
     .then(response=>{
       this.SwtAlertResponse(response.data);
-
       this.BtnAddDocumentLoading = false;
-      this.adddocumentdialog = false;
-      this.$swal(this.apititle,this.apimessage,this.apistatus);
-
-      this.getFilesFromApi();
       this.$refs.addDocForm.reset();
+      
+      this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+      this.adddocumentdialog = false;
+      this.getFilesFromApi();
+      });
+
 
       // alert(response)
     })

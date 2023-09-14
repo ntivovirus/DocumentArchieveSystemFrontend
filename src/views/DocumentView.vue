@@ -27,11 +27,11 @@
               class="elevation-1"
               :search="search" :loading="documentdataloading" loading-text="Loading... Please wait">
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-5" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
-                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-5" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
-                  <!-- <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon> -->
-                  <v-icon small class="mr-5" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
-                  <v-icon small class="mr-5" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
+                  <v-icon small class="mr-3" @click="FetchFileDetails(item.id)"> mdi-pencil </v-icon>
+                  <v-icon v-show="deleteShowIcon" color="red" small class="mr-3" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
+                  <!-- <v-icon small class="mr-3" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon> -->
+                  <v-icon small class="mr-3" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
+                  <v-icon small class="mr-3" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
                   <!-- <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon> -->
 
                 </template>

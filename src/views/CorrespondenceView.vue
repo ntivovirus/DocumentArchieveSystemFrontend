@@ -339,10 +339,12 @@ export default {
 
           if (response.status === 200) {
             this.BtnAddCorrespondenceLoading = false;
+            this.$refs.form.reset();
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
             this.addcorrespondencedialog = false;
             this.getCorrespondencesFromApi();
-            this.$refs.form.reset();
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
+            });
 
           } else {
             this.$swal(this.apititle,this.apimessage,this.apistatus);
@@ -397,13 +399,11 @@ export default {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
               this.BtnUpdateCorrespondenceLoading = false;
+
               this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
                 this.updatecorrespondencedialog = false;
-              
                 this.getCorrespondencesFromApi();
-              })
-
-
+              });
             }
           })
     },
@@ -418,10 +418,12 @@ export default {
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              this.getCorrespondencesFromApi();
-              this.deletecorrespondencedialog = false;
               this.BtnDeleteCorrespondenceLoading = false;
-              this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+                this.deletecorrespondencedialog = false;
+                this.getCorrespondencesFromApi();
+              });
 
             }
             else{
