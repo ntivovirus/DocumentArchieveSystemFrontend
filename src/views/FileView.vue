@@ -540,7 +540,7 @@ axios
 
           if (response.status === 200) {
             this.BtnAddDocumentLoading = false;
-            this.$refs.form.reset();
+            this.$refs.addDocForm.reset();
 
             this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
             this.adddocumentdialog= false;

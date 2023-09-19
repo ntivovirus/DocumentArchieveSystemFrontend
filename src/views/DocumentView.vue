@@ -8,7 +8,7 @@
               <h4>DOCUMENTS</h4>
               <v-spacer></v-spacer>
               <!-- <v-btn slot="activator" v-bind:disabled="newDocumentDisabled" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog"> -->
-              <v-btn slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog">
+              <v-btn v-show="false" slot="activator" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog">
 
                 <v-icon>mdi-plus</v-icon>
                 <span class="text-capitalize">New Document</span> 
@@ -56,7 +56,7 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-form class="px-3" ref="form" v-model="valid" lazy-validation>
+            <v-form class="px-3" ref="addDocForm" enctype="multipart/form-data" v-model="valid" lazy-validation>
               
               <v-autocomplete v-model="selectCorrespondence" :items="correspondences" label="Select Correspondence"
               placeholder="Select..." prepend-icon="mdi-group" :rules="nameRules" required></v-autocomplete>
@@ -67,7 +67,8 @@
               <v-text-field id="fileNameTxtField" label="Document Name" v-model="documentNameTxtField"
                 prepend-icon="mdi-file" :rules="nameRules" required></v-text-field>
               <v-text-field type="number" label="Folio Number" v-model="folioNumberTxtField"
-                prepend-icon="mdi-file-question" :rules="nameRules" required></v-text-field>
+                prepend-icon="mdi-file-question" :rules="numberRules" required></v-text-field>
+              <input type="file"    ref="fileInput" required/>
 
             </v-form>
           </v-card-text>
@@ -167,6 +168,8 @@ export default {
   data() {
     return {
 
+      userID: null,
+
       // USER ROLE CONTROLLER
       newDocumentDisabled: false,
 
@@ -193,8 +196,8 @@ export default {
 
 
       //ADD NEW DOCUMENT DATA
-      documentNameTxtField: "",
-      folioNumberTxtField: "",
+      // documentNameTxtField: "",
+      // folioNumberTxtField: "",
       // selectStatus: "", //IF TO ADD IT TO THE ADD DIALOG
 
 
@@ -308,29 +311,7 @@ export default {
         });
     },
 
-
-    addDocumentMethod() {
-      this.BtnAddDocumentLoading = true;
-      axios
-        .post("http://127.0.0.1:8000/api/AddDocumentRoute", {
-          DocumentNameHolder: this.documentNameTxtField,
-          FolioNumberHolder: this.folioNumberTxtField,
-          fileHolder: this.selectFile,
-          correspondenceHolder: this.selectCorrespondence
-
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 200) {
-            this.BtnAddDocumentLoading = false;
-            this.adddocumentdialog = false;
-            this.getDocumentsFromApi();
-            this.$refs.form.reset();
-          } else {
-            alert("Error adding Document");
-          }
-        });
-    },
+ 
 
     FetchFileDetails(FileId) {
 
@@ -450,10 +431,12 @@ axios
           this.SwtAlertResponse(response.data);
 
           if (response.status === 200) {
-            this.getDocumentsFromApi();
-            this.deletedocumentdialog = false;
             this.BtnDeleteDocumentLoading = false;
-            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+            this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
+              this.getDocumentsFromApi();
+              this.deletedocumentdialog = false;
+            });
 
           }
           else{
@@ -469,7 +452,7 @@ axios
         .then((response) => {
           if (response.status === 200) {
             var correspondences = response.data
-            console.log('steve' + correspondences);
+            // console.log('steve' + correspondences);
             correspondences.forEach(correspondence => {
               this.correspondences.push(correspondence.CORRESPONDENCE_NAME);
               // $zako = this.correspondences.push(correspondence.id); 
@@ -502,6 +485,31 @@ axios
           }
         }
         )
+    },
+
+    getuserDetailsMethod(){
+      // this.username = sessionStorage.getItem("userdetails"); // WORKING LINK
+
+              // Retrieve the JSON string from Session Storage
+        const storedUser = sessionStorage.getItem("userdetails");
+
+        // Parse the JSON string back to an object
+        const user = storedUser ? JSON.parse(storedUser) : null;
+
+        ////////////////////
+        /////////////////
+
+        let stringValue = user ? user.id : null; // Example string containing a number
+        let intValue = parseInt(stringValue); // Convert string to integer
+
+        ////////////////////
+        /////////////////
+
+        // Access the 'username' property
+        this.userID =  intValue;
+
+        // alert(this.userID);
+
     },
 
     SwtAlertResponse($ntivo){
@@ -540,6 +548,7 @@ axios
     this.getDocumentsFromApi();
     this.selectcorrespondencemethod();
     this.selectfilemethod();
+    this.getuserDetailsMethod();
     this.userRolemethodDeterminer();
     
   },

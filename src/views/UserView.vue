@@ -355,7 +355,7 @@ export default {
     addUserMethod() {
       this.BtnAddUserLoading = true;
       axios
-        .post("http://127.0.0.1:8000/api/AddUserRoute", {
+        .post("http://127.0.0.1:8000/api/AddUserRoute", { 
           UserfullnameHolder: this.userFullNameTxtField,
           UserEmailHolder: this.userEmailTxtField,
           UserPasswordHolder: this.userPasswordTxtField,
@@ -374,8 +374,12 @@ export default {
               this.getUsersFromApi();
             });
 
-          } else {
+          } else if(response.status === 500) {
             // alert("Error adding User");
+            this.$swal(this.apititle,this.apimessage,this.apistatus);
+
+          }
+          else{
             this.$swal(this.apititle,this.apimessage,this.apistatus);
 
           }

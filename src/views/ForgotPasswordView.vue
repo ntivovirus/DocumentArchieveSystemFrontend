@@ -13,15 +13,12 @@
             >
           </v-avatar>
           <div class="mb-10">
-          <h2  >Blantyre District Council </h2>
-          <h4 class="">Archive Management System</h4>
+          <h2  >PASSWORD </h2>
+          <h4 class="">Forgot Your Password</h4>
         </div>
         <div class="md-3">
             <v-form  @submit.prevent="login">
-                <v-text-field  v-model="munthu.useremailTxtField" variant="outlined" type="email" label="User Name" prepend-icon="mdi-email"></v-text-field>
-
-                <v-text-field v-model="munthu.passwordTxtField" variant="outlined" type="password" label="password" prepend-icon="mdi-lock"></v-text-field>
-                <a href="ForgotPasswordView.vue"  class="text-body-2 font-weight-regular">Forgot Password?</a>
+                <v-text-field  v-model="munthu.useremailTxtField" variant="outlined" type="email" label="Your Registered Email" prepend-icon="mdi-email"></v-text-field>
 
                 <v-btn type="submit" color="green white--text" block class="mt-2" :loading="BtnLoginLoading">Sign in</v-btn>
 
@@ -43,7 +40,7 @@
 import axios from "axios";
 
 export default {
-  name: "login", // name of component view
+  name: "forgotpassword", // name of component view
 
   data() {
     return {

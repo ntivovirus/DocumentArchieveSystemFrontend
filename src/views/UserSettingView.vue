@@ -25,6 +25,7 @@
             An awesome title
           </v-card-title>
           <v-card-text>
+            <template>
             <p>
               Duis lobortis massa imperdiet quam. Donec vitae orci sed dolor rutrum auctor. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc, vitae euismod ligula urna in dolor. Praesent congue erat at massa.
             </p>
@@ -36,6 +37,7 @@
             <p class="mb-0">
               Ut leo. Suspendisse potenti. Duis vel nibh at velit scelerisque suscipit. Fusce pharetra convallis urna.
             </p>
+          </template>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -45,6 +47,7 @@
             An even better title
           </v-card-title>
           <v-card-text>
+            <template>
             <p>
               Maecenas ullamcorper, dui et placerat feugiat, eros pede varius nisi, condimentum viverra felis nunc et lorem. Sed hendrerit. Maecenas malesuada. Vestibulum ullamcorper mauris at ligula. Proin faucibus arcu quis ante.
             </p>
@@ -52,10 +55,12 @@
             <p class="mb-0">
               Etiam vitae tortor. Curabitur ullamcorper ultricies nisi. Sed magna purus, fermentum eu, tincidunt eu, varius ut, felis. Aliquam lobortis. Suspendisse potenti.
             </p>
+          </template>
           </v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
+
 
     <!--END Insert text area-->
 

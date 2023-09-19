@@ -78,6 +78,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     // component : login
     component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
+  },
+  {
+    path: '/forgotpassword',
+    name: 'forgotpassword',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component : login
+    component: () => import(/* webpackChunkName: "about" */ '../views/ForgotPasswordView.vue')
   }
 ]
 
