@@ -5,6 +5,7 @@
         <v-col>
           <v-card>
             <v-card-title> 
+              <v-icon left>mdi-folder-multiple</v-icon>
               <h4>FILES</h4>
               <v-spacer></v-spacer>
               <!-- <v-btn slot="activator" v-bind:disabled="newFileDisabled" depressed class="primary" @click="addfiledialog = !addfiledialog">--> <!--TO REMIND ON HOW TO BIND THE BTN WITH DISABLE PROP -->

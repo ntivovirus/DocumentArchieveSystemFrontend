@@ -5,6 +5,7 @@
         <v-col>
           <v-card>
             <v-card-title>
+              <v-icon left>mdi-group</v-icon>
               <h4>CORRESPONDENCES</h4>
               <v-spacer></v-spacer>
               <v-btn

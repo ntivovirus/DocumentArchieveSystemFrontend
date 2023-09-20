@@ -21,7 +21,9 @@
                 <v-text-field  v-model="munthu.useremailTxtField" variant="outlined" type="email" label="User Name" prepend-icon="mdi-email"></v-text-field>
 
                 <v-text-field v-model="munthu.passwordTxtField" variant="outlined" type="password" label="password" prepend-icon="mdi-lock"></v-text-field>
-                <a href="ForgotPasswordView.vue"  class="text-body-2 font-weight-regular">Forgot Password?</a>
+               
+                <router-link class="text-body-2 font-weight-regular" to="/forgotpassword">Forgot Password?</router-link>
+                <!-- <a href=""  class="text-body-2 font-weight-regular">Forgot Password?</a> -->
 
                 <v-btn type="submit" color="green white--text" block class="mt-2" :loading="BtnLoginLoading">Sign in</v-btn>
 

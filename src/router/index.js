@@ -98,7 +98,9 @@ const router = new VueRouter({
 
 // BAD
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'login' && sessionStorage.getItem("api_token")=== null ) next({ name: 'login' })
+  if (to.name !== 'login' &&
+      to.name !== 'forgotpassword' &&
+      sessionStorage.getItem("api_token")=== null ) next({ name: 'login' })
   // if the user is not authenticated, `next` is called twice
   next()
 })

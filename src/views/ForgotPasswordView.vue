@@ -6,26 +6,27 @@
            
         <v-sheet width="400"  class="mx-auto justify-center">
             <v-avatar size="150" tile>
-            <img
+            <!-- <img
               src="/Malawi-Gov.png"
               alt="BLantyre District Council"
               height="100"
-            >
+            > -->
+            <v-icon size="150">mdi-lock-question</v-icon>
           </v-avatar>
           <div class="mb-10">
-          <h2  >PASSWORD </h2>
-          <h4 class="">Forgot Your Password</h4>
+          <h3  >RESET YOUR PASSWORD </h3>
+          <h5 class="">Enter your registered email in this system and a reset link will be sent to your Email</h5>
         </div>
         <div class="md-3">
             <v-form  @submit.prevent="login">
-                <v-text-field  v-model="munthu.useremailTxtField" variant="outlined" type="email" label="Your Registered Email" prepend-icon="mdi-email"></v-text-field>
+                <v-text-field  v-model="munthu.useremailTxtField" variant="outlined" type="email" label="Enter Your Registered Email" prepend-icon="mdi-email"></v-text-field>
 
-                <v-btn type="submit" color="green white--text" block class="mt-2" :loading="BtnLoginLoading">Sign in</v-btn>
+                <v-btn type="submit" color="blue white--text" block class="mt-2" :loading="BtnLoginLoading">Sign in</v-btn>
 
             </v-form>
           </div>
             <div class="mt-2">
-                <p class="text-body-2">Don't have an account? <a href="#">Sign Up</a></p> 
+                <router-link class="text-body-2" to="/login"> Back To Login Page </router-link>
             </div>
         </v-sheet>
 

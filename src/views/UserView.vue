@@ -5,6 +5,7 @@
         <v-col>
           <v-card>
             <v-card-title>
+              <v-icon left>mdi-account-group</v-icon>
               <h4>USERS</h4>
               <v-spacer></v-spacer>
               <v-btn
@@ -81,6 +82,7 @@
                 required
               ></v-text-field>
               <v-text-field
+                type="password"
                 label="Password"
                 v-model="userPasswordTxtField"
                 prepend-icon="mdi-lock" 

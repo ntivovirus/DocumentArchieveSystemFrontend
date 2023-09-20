@@ -5,6 +5,7 @@
         <v-col>
           <v-card>
             <v-card-title>
+              <v-icon left>mdi-file</v-icon>
               <h4>DOCUMENTS</h4>
               <v-spacer></v-spacer>
               <!-- <v-btn slot="activator" v-bind:disabled="newDocumentDisabled" depressed class="primary" @click="adddocumentdialog = !adddocumentdialog"> -->
