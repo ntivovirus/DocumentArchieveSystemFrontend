@@ -159,7 +159,7 @@
           </v-card-title>
           <v-card-text>
           <v-form class="px-3" ref="addDocForm"  enctype="multipart/form-data" v-model="valid" lazy-validation>
-              <v-text-field disabled label="Correspondence" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
+              <v-text-field disabled label="Correspondence" v-model="this.selectCorrespondence" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Name" v-model="file.FILE_NAME" prepend-icon="mdi-group"></v-text-field>
               <v-text-field disabled label="File Description" v-model="file.FILE_DESCRIPTION"
                 prepend-icon="mdi-group"></v-text-field>
