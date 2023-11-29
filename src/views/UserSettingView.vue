@@ -8,8 +8,6 @@
             <v-icon left>mdi-account-settings</v-icon>
               <h4>USER SETTINGS</h4> 
               <v-spacer></v-spacer> 
-             
-
 
           </v-card-title>
           <v-card-text>
@@ -29,85 +27,44 @@
                         Update User Info
                       </v-card-title>
                       <v-card-text>
-                        <v-form v-on:submit.prevent="ownUserUpdateMethod">
+                        <v-form v-model="valid" lazy-validation>
                           <v-row dense>
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
-                                v-model.trim="user.name"
+                                :rules="nameRules"
+                                v-model="userdata.name"
                                 label="Full Name"
                                 dense
                                 prepend-icon="mdi-account"
                               ></v-text-field>
                             </v-col>
                           </v-row>
-                          <!-- <v-row dense>
-                            <v-col cols="12" xl="5" lg="6" sm="7" md="7">
-                              <v-text-field
-                                v-model.trim="user.last_name"
-                                label="Last Name"
-                                dense
-                                prepend-icon="mdi-account"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row> -->
-                          <!-- <v-row dense>
-                            <v-col cols="12" xl="5" lg="6" sm="7" md="7">
-                              <v-text-field
-                                v-model.trim="user.user_name"
-                                label="Username"
-                                dense
-                                prepend-icon="mdi-account"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row> -->
                           <v-row dense>
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
                               disabled
                                 type="email"
-                                v-model.trim="user.email"
+                                v-model="userdata.email"
                                 label="Email"
                                 dense
                                 prepend-icon="mdi-mail"
                               ></v-text-field>
                             </v-col>
                           </v-row>
-                          <!-- <v-row dense>
-                            <v-col cols="12" xl="5" lg="6" sm="7" md="7">
-                              <v-text-field
-                                v-model.trim="user.phone_number"
-                                label="Phone"
-                                dense
-                                prepend-icon="mdi-phone"
-                              >
-                              </v-text-field>
-                            </v-col>
-                          </v-row> -->
-                          <v-row dense>
-                            <v-col cols="12" xl="5" lg="6" sm="7" md="7">
-                              <v-text-field
-                              disabled
-                                type="password"
-                                v-model.trim="user.password"
-                                label="Enter password"
-                                dense
-                                prepend-icon="mdi-lock"
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                          <v-btn
+                  
+                          <!-- <v-btn
                             class="grey text-capitalize"
                             elevation="2"
                             outlined
                             v-on:click="cancelUserUpdate"
                             >Cancel</v-btn
-                          >
+                          > -->
                           <v-btn
-                            type="submit"
+                            :disabled="!valid"
                             elevation="2"
-                            :loading="loading ? '#B55B68' : null"
                             outlined
                             class="primary text-capitalize ml-2"
+                            @click="ownUserUpdateMethod"
                             >Save</v-btn
                           >
                         </v-form>
@@ -128,7 +85,7 @@
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
                                 type="password"
-                                v-model.trim="user.oldPassword"
+                                v-model.trim="userdata.oldPassword"
                                 label="Enter old password"
                                 dense
                                 prepend-icon="mdi-lock"
@@ -139,7 +96,7 @@
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
                                 type="password"
-                                v-model.trim="user.password"
+                                v-model.trim="userdata.password"
                                 label="New password"
                                 dense
                                 prepend-icon="mdi-lock"
@@ -150,7 +107,7 @@
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
                                 type="password"
-                                v-model.trim="user.password_confirmation"
+                                v-model.trim="userdata.password_confirmation"
                                 label="Confirm new password"
                                 dense
                                 prepend-icon="mdi-lock"
@@ -198,7 +155,7 @@ export default {
   data() {
     return {
 
-      UserID:null,
+      userID:null,
 
       // SWEETALERTS 
       apimessage: null,
@@ -210,10 +167,10 @@ export default {
 
 
       //UPDATE USER DATA 
-      user: {
-        name:null, 
-        email:null, 
-        role:null
+      userdata: {
+        name: null,
+        email: null
+        
       },
 
       //END UPDATE USER DATA
@@ -253,10 +210,8 @@ axios
   .get(`http://127.0.0.1:8000/api/getUserupdatedetail/${this.userID}`)
   .then((response) => {
     if (response.status === 200) {
-      this.user = response.data.User
-      // this.selectCorrespondence = response.data.updateFileCorrespondanceNameSelect
-      // alert(selectStatus);
-      // this.updatefiledialog = true;
+      this.userdata = response.data.User
+    
     }
   })
 
@@ -264,17 +219,20 @@ axios
 
     ownUserUpdateMethod(){
       axios
-        .put(`http://127.0.0.1:8000/api/updateOwnUserRoute/${this.UserID}`, {
-            UserNameHolder: this.user.name
+        .put(`http://127.0.0.1:8000/api/updateOwnNameRoute/${this.userID}`, {
+          updatenameholder: this.userdata.name
+            // UserEmailHolder: this.user.email
+
           })
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              this.BtnUpdateCorrespondenceLoading = false;
+              // this.BtnUpdateCorrespondenceLoading = false;
 
               this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
-                this.updatecorrespondencedialog = false;
-                this.getCorrespondencesFromApi();
+                this.FetchUserDetails();
+                // this.updatecorrespondencedialog = false;
+                // this.getCorrespondencesFromApi();
               });
             }
           })
@@ -317,7 +275,7 @@ axios
 
   mounted() {
     this.getuserDetailsMethod();
-    this.FetchUserDetails(UserId);
+    this.FetchUserDetails(this.userID);
   },
 };
 </script>

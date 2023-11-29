@@ -32,7 +32,9 @@
                   <v-icon v-show="deleteShowIcon" color="red" small class="mr-3" @click="FetchDeleteDocumentDetails(item.id)"> mdi-delete </v-icon>
                   <!-- <v-icon small class="mr-3" @click="FetchDocumentFileDetails(item.id)"> mdi-plus-thick </v-icon> -->
                   <v-icon small class="mr-3" @click="FetchDownloadDocumentDetails(item.id)"> mdi-download </v-icon>
-                  <v-icon small class="mr-3" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon>
+                  <v-icon small class="mr-3" @click="FetchPreviewDocumentDetails(item.id)"> mdi-eye-check </v-icon> 
+                  <v-icon small class="mr-3" @click="downloadFile"> mdi-download-lock </v-icon>
+                  <v-icon small class="mr-3" @click="previewFile"> mdi-eye-remove </v-icon>
                   <!-- <v-icon small class="mr-5" @click="FetchDocumentFileDetails(item.id)"> mdi-printer </v-icon> -->
 
                 </template>
@@ -149,10 +151,20 @@
 
 
       <!-- START DOCUMENT PREVIEW MODAL -->
+      <v-dialog v-model="previewdocumentdialog" max-width="900" max-height="900">
+        <v-card>
+          <div>
+          <v-card-title>DOCUMENT</v-card-title>
+          <v-card-text>
+            <div>
+             <!-- <iframe :src={{iframeDocSrcPreview}} width="100%" height="900"  frameborder="5"></iframe>  -->
+             <!-- {{iframeDocSrcPreview}} -->
+            </div>
+          </v-card-text>
+        </div>
+        </v-card>
+      </v-dialog>
       
-       
-                 
-     
 
       <!-- END DOCUMENT PREVIEW MODAL -->
 
@@ -168,6 +180,8 @@ export default {
 
   data() {
     return {
+
+      iframeDocSrcPreview: null,
 
       userID: null,
 
@@ -297,6 +311,59 @@ export default {
 
   methods: {
 
+    async downloadFile() {
+      try {
+        const downloadUrl = `http://127.0.0.1:8000/api/previewDocumentRouteDownload`;
+        
+     
+        const response = await axios.get(downloadUrl, {
+          responseType: 'blob', // Ensure responseType is set to blob for file downloads
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Extract the filename from the response headers to include the file extension
+        const contentDisposition = response.headers['content-disposition'];
+        let filename = 'downloaded_file'; // Default file name
+
+        if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
+          const regex = /filename="(.+?)"/;
+          const matches = contentDisposition.match(regex);
+          if (matches && matches.length > 1) {
+            filename = matches[1];
+          }
+        }
+
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading the file:', error);
+        // Handle error as needed
+      }
+  },
+
+
+  async previewFile() {
+      try {
+        const previewUrl = `http://127.0.0.1:8000/api/previewDocumentRoute`;
+
+        const response = await axios.get(previewUrl, {
+          responseType: 'blob', // Ensure responseType is set to blob for file content
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        this.fileContent = url;
+      } catch (error) {
+        console.error('Error previewing the file:', error);
+        // Handle error as needed
+      }
+    },
+
+
     getDocumentsFromApi() { // USED
       this.documentdataloading = true;
       axios
@@ -387,7 +454,11 @@ axios
   .then((response) => {
     // if (response.status === 200) {
 
-      this.documenturl = response.data.url;
+      //this.documenturl = response.data.url;
+      // this.documenturl = response.data;
+
+      this.iframeDocSrcPreview = response.data.pdfinfo;
+
 
     // }
   })
