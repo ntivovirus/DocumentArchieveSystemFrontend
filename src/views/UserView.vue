@@ -76,7 +76,7 @@
               ></v-text-field>
               <v-text-field
                 label="User Email"
-                v-model="userEmailTxtField"
+                v-model.trim="userEmailTxtField"
                 prepend-icon="mdi-email"
                 :rules="emailRules"
                 required
@@ -84,7 +84,7 @@
               <v-text-field
                 type="password"
                 label="Password"
-                v-model="userPasswordTxtField"
+                v-model.trim="userPasswordTxtField"
                 prepend-icon="mdi-lock" 
                 :rules="nameRules"
                 required

@@ -36,6 +36,7 @@
                                 label="Full Name"
                                 dense
                                 prepend-icon="mdi-account"
+                                :loading="fullnameloading"
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -47,7 +48,7 @@
                                 v-model="userdata.email"
                                 label="Email"
                                 dense
-                                prepend-icon="mdi-mail"
+                                prepend-icon="mdi-email"
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -79,24 +80,26 @@
                       <v-card-text>
                         <v-form
                           ref="passwordForm"
-                          v-on:submit.prevent="updatePassword"
+                          v-model="valid"
                         >
                           <v-row dense>
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
+                              :rules="oldpasswordrules"
                                 type="password"
-                                v-model.trim="userdata.oldPassword"
+                                v-model.trim="old_password"
                                 label="Enter old password"
                                 dense
-                                prepend-icon="mdi-lock"
+                                prepend-icon="mdi-lock-open-check"
                               ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row dense>
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
+                                :rules="passwordRules"
                                 type="password"
-                                v-model.trim="userdata.password"
+                                v-model.trim="new_password"
                                 label="New password"
                                 dense
                                 prepend-icon="mdi-lock"
@@ -106,11 +109,12 @@
                           <v-row dense>
                             <v-col cols="12" xl="5" lg="6" sm="7" md="7">
                               <v-text-field
+                                :rules="passwordRules"
                                 type="password"
-                                v-model.trim="userdata.password_confirmation"
+                                v-model.trim="confirm_password"
                                 label="Confirm new password"
                                 dense
-                                prepend-icon="mdi-lock"
+                                prepend-icon="mdi-lock-check"
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -118,11 +122,13 @@
                             class=" grey text-capitalize"
                             elevation="2"
                             outlined
-                            v-on:click="cancelPasswordUpdate"
-                            >Cancel</v-btn
+                            v-on:click="resetForms"
+                            >Clear
+                            </v-btn
                           >
                           <v-btn
-                            type="submit"
+                            :disabled="!valid"
+                            @click="update_password"
                             elevation="2"
                             :loading="loading ? '#B55B68' : null"
                             outlined
@@ -134,9 +140,6 @@
                     </v-card>
                   </v-tab-item>
                 </v-tabs>
-
-
-
 
           </v-card-text>
         </v-card>
@@ -157,12 +160,25 @@ export default {
 
       userID:null,
 
+      //PASSWORD UPDATE TEXT FIELDS
+      confirm_password: null,
+      old_password: null,
+      new_password: null,
+
+      //END PASSWORD UPDATE FIELDS
+
       // SWEETALERTS 
       apimessage: null,
       apistatus: null,
       apititle: null,
 
       // END SWEETALERTS 
+
+      // LOADING
+      fullnameloading:false,
+
+      // END LOADING
+
       ////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -172,6 +188,8 @@ export default {
         email: null
         
       },
+
+      
 
       //END UPDATE USER DATA
       ////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,11 +208,21 @@ export default {
       numberRules: [
         v => !!v || 'This is a required field! Please Enter Folio number',
         ],
-
+      
   emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
+
+  passwordRules: [
+        v => !!v || 'Password cannot be empty',
+        v => (v && v.length >= 8) || 'Password should have a minimum of 8 characters',
+      ],
+
+      oldpasswordrules: [
+        v => !!v || 'This is a required field!',
+        v => (v && v.length >= 8) || 'I hope your old Password does not have a minimum of 8 characters',
+        ],
 
 // END VALIDATION RULES
 
@@ -204,35 +232,33 @@ export default {
   methods: {
 
     FetchUserDetails(UserId) {
-
+this.fullnameloading=true,
 this.userID = UserId;
 axios
   .get(`http://127.0.0.1:8000/api/getUserupdatedetail/${this.userID}`)
   .then((response) => {
     if (response.status === 200) {
       this.userdata = response.data.User
-    
+      this.fullnameloading=false
     }
   })
 
 },
 
     ownUserUpdateMethod(){
+      this.fullnameloading=true,
+
       axios
         .put(`http://127.0.0.1:8000/api/updateOwnNameRoute/${this.userID}`, {
           updatenameholder: this.userdata.name
-            // UserEmailHolder: this.user.email
-
           })
           .then((response) => {
             this.SwtAlertResponse(response.data);
             if (response.status ===200) {
-              // this.BtnUpdateCorrespondenceLoading = false;
-
               this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{
-                this.FetchUserDetails();
-                // this.updatecorrespondencedialog = false;
-                // this.getCorrespondencesFromApi();
+                this.FetchUserDetails(this.userID);
+                this.fullnameloading=false
+
               });
             }
           })
@@ -270,7 +296,73 @@ axios
           this.apimessage = $ntivo.message;
           this.apistatus = $ntivo.status;
           this.apititle = $ntivo.status;
+    },
+
+    resetForms(){
+      this.$refs.passwordForm.reset()
+
+    },
+
+    update_password(){
+
+      if (!this.old_password || !this.new_password || !this.confirm_password){
+        this.$swal('Error', 'Text fields cannot be empty', 'error');
+      }
+      else{
+        if(this.new_password == this.confirm_password){
+            axios
+              .put(`http://127.0.0.1:8000/api/updateOwnPasswordRoute/${this.userID}`, {
+                oldpasswordholder : this.old_password,
+                newpasswordholder : this.new_password,
+                confirmpasswordholder : this.confirm_password
+              }). then((response) => {
+                this.SwtAlertResponse(response.data);
+
+                if(response.status === 200){
+              this.$swal(this.apititle,this.apimessage,this.apistatus).then(()=>{});
+                }
+              })
+
+            // this.$swal('Password Matched','','success');
+            }
+            else{
+            this.$swal('Error', 'New and Confirm passwords do not match','error');
+            }
+
+
+
+
+
+
+
+
+
+      }
+
+
+
+      
+
+
+
+
+
     }
+  },
+
+  computed: {
+    passwordmatch(){
+
+      if(this.new_password==this.confirm_password){
+        alert("Iwe virus samala");
+      }
+      else{
+        alert("not yet done");
+      }
+
+
+    }
+
   },
 
   mounted() {
