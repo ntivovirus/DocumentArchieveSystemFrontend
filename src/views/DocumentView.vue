@@ -157,7 +157,10 @@
           <v-card-title>DOCUMENT</v-card-title>
           <v-card-text>
             <div>
-             <!-- <iframe :src={{iframeDocSrcPreview}} width="100%" height="900"  frameborder="5"></iframe>  -->
+             <iframe id="pdfViewer" width="100%" height="900"  frameborder="5"></iframe> 
+             <!-- <iframe :src={iframeDocSrcPreview} width="100%" height="900"  frameborder="5"></iframe>  -->
+             <!-- <iframe src="public/testtest.pdf" width="100%" height="900"  frameborder="5"></iframe>  -->
+
              <!-- {{iframeDocSrcPreview}} -->
             </div>
           </v-card-text>
@@ -172,6 +175,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 
@@ -182,6 +186,7 @@ export default {
     return {
 
       iframeDocSrcPreview: null,
+      name: 'PDFViewer',
 
       userID: null,
 
@@ -443,30 +448,70 @@ axios
   })
 
 },
-
-FetchPreviewDocumentDetails(DocumentId) { // USED
-
-this.documentID = DocumentId;
-this.previewdocumentdialog = true;
-
-axios
-  .get(`http://127.0.0.1:8000/api/previewDocumentRoute/${this.documentID}`)
-  .then((response) => {
-    // if (response.status === 200) {
-
-      //this.documenturl = response.data.url;
-      // this.documenturl = response.data;
-
-      this.iframeDocSrcPreview = response.data.pdfinfo;
-
-
-    // }
-  })
-  .catch(error => {
-        console.error(error);
+//////////////////////////////////////
+///////////////////////////////////
+async FetchPreviewDocumentDetails(DocumentId) {
+    try {
+      this.documentID = DocumentId;
+      this.previewdocumentdialog = true;
+      const response = await axios.get('http://127.0.0.1:8000/api/previewDocumentRoute/${this.documentID}', {
+        responseType: 'blob', // Important: responseType must be set to 'blob' to handle binary data
       });
+      this.iframeDocSrcPreview= URL.createObjectURL(response.data);
+    } catch (error) {
+      console.error('Error fetching PDF:', error);
+    }
 
-},
+  },
+////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////
+
+// FetchPreviewDocumentDetails(DocumentId) { // USED
+
+// this.documentID = DocumentId;
+// this.previewdocumentdialog = true;
+
+// axios
+//   .get(`http://127.0.0.1:8000/api/previewDocumentRoute/${this.documentID}`)
+//   .then((response) => {
+    
+//       //this.documenturl = response.data.url;
+//       // this.documenturl = response.data;
+
+//       this.iframeDocSrcPreview = response.data.DocPathFromAPI;
+
+//   })
+//   .catch(error => {
+//         console.error(error);
+//       });
+
+// },
+
+
+///////////////////////////////// GPT
+// async FetchPreviewDocumentDetails(DocumentId) {
+//   this.documentID = DocumentId;
+//   this.previewdocumentdialog = true;
+//       try {
+//         const response = await axios.get('http://127.0.0.1:8000/api/previewDocumentRoute/${this.documentID}'); // Replace with your API endpoint
+//         if (!response.ok) {
+//           throw new Error('Network response was not ok');
+//         }
+//         const blob = await response.blob();
+//         this.displayPDF(blob);
+//       } catch (error) {
+//         console.error('There has been a problem with your fetch operation:', error);
+//       }
+//     },
+//     displayPDF(blob) {
+//       const url = URL.createObjectURL(blob);
+//       const iframe = this.$el.querySelector('#pdfViewer');
+//       iframe.src = url;
+//     },
+
+
+/////////////////////////////////////// END GPT
 
     updateFileMethod() {
       this.BtnUpdateFileLoading = true,
